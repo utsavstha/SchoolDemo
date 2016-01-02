@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/news"
+        android:title="News"/>
+    <item
+        android:id="@+id/notice_board"
+        android:title="Notice Board"/>
+    <item
+        android:id="@+id/routines"
+        android:title="Class Routines"/>
+    <item
+        android:id="@+id/contacts"
+        android:title="Contacts"/>
+</menu>

@@ -1,31 +1,172 @@
 package com.example.utsav.schooldemo;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.os.Handler;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.example.utsav.schooldemo.Utils.SQLiteHandler;
+import com.example.utsav.schooldemo.app.AppConfig;
+import com.example.utsav.schooldemo.app.AppController;
+import com.example.utsav.schooldemo.app.SessionManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import it.michelelacorte.elasticprogressbar.ElasticDownloadView;
+import it.michelelacorte.elasticprogressbar.OptionView;
+
 public class SplashScreen extends AppCompatActivity {
 
+    public static String TAG = SplashScreen.class.getSimpleName();
+    private SQLiteHandler db;
+    ElasticDownloadView mElasticDownloadView;
+    private Handler handler = new Handler();
+    private int mProgress = 0;
+    SessionManager session;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        session = new SessionManager(getApplicationContext());
+        if(session.isLoggedIn()){
+            Intent intent = new Intent(SplashScreen.this, NoticeAndStuff.class);
+            startActivity(intent);
+            finish();
+        }
+        db = new SQLiteHandler(getApplicationContext());
+        try {
+            db.deleteClients();
+        }catch (Exception e){
+            Log.d(TAG,e.toString());
+        }
+        mElasticDownloadView = (ElasticDownloadView)findViewById(R.id.elastic_download_view);
+        mElasticDownloadView.startIntro();
+        OptionView.noBackground = true;
+        if(!session.isLoggedIn())
+            startProgress();
+        //downloadData();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+    }
+
+    private void startProgress() {
+        final String tag_string_req = "req_Client";
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void run() {
+                StringRequest strReq = new StringRequest(Request.Method.POST,
+                        AppConfig.URL_LIST, new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG, "Login Response: " + response.toString());
+                        //hideDialog();
+
+                        try {
+                            JSONObject jObj = new JSONObject(response);
+                            boolean error = jObj.getBoolean("error");
+
+                            // Check for error node in json
+                            if (!error) {
+                                // user successfully logged in
+
+                                // Now store the data in SQLite
+                                //int count = jObj.getInt("count");
+                                final JSONArray client = jObj.getJSONArray("client");
+                                final int length = client.length();
+                                int i;
+                                for (i = 0; i < length; i++) {
+                                    String name = client.getString(i);
+                                    db.addClient(name);
+                                    mProgress = (i*100) / length;
+
+                                }
+                                if (i == length-1) {
+                                    mElasticDownloadView.success();
+
+                                }
+
+
+                                // Inserting row in users table
+                                //  db.addUser(name, email, uid, created_at);
+
+                                 //Launch main activity
+                                 Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                                 startActivity(intent);
+                                 finish();
+                            } else {
+                                // Error in login. Get the error message
+                                String errorMsg = jObj.getString("error_msg");
+                                Toast.makeText(getApplicationContext(),
+                                        errorMsg, Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            // JSON error
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(TAG, "Login Error: " + error.getMessage());
+                        Toast.makeText(getApplicationContext(),
+                                error.getMessage(), Toast.LENGTH_LONG).show();
+                        // hideDialog();
+                    }
+                }) {
+
+                    @Override
+                    protected Map<String, String> getParams() {
+                        // Posting parameters to login url
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("tag", "client");
+
+                        return params;
+                    }
+
+                };
+
+                // Adding request to request queue
+                AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
+
+                while (mProgress < 100) {
+                    // progressStatus = downloadFile();
+                    handler.post(new Runnable() {
+                        public void run() {
+                            //Set progress dynamically
+                            mElasticDownloadView.setProgress(mProgress);
+                            Log.d("Progress:", "" + mElasticDownloadView.getProgress());
+                        }
+                    });
+                    mProgress++;
+                }
+
             }
-        });
+        }, 1000);
     }
 
     @Override
