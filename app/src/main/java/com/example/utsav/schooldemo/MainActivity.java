@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements
     EditText editText;
     SessionManager session;
     static String spinnerValue;
+    int count = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,5 +166,22 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        if(count == 1)
+        {
+            count=0;
+            finish();
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "Press Back again to quit.", Toast.LENGTH_SHORT).show();
+            count++;
+        }
+
+        return;
     }
 }

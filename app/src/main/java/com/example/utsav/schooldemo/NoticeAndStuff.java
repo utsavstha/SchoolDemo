@@ -47,6 +47,7 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
     private ActionBarDrawerToggle mDrawerToggle;
     //SessionManager session;
     NoticeDB db;
+    int count = 0;
     SessionManager session;
     private String cid;
     private ProgressDialog progressBar;
@@ -83,18 +84,13 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
 
         recyclerView.setLayoutManager(llm);
         populateRecyclerView();
-
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Toast.makeText(getApplicationContext(),listData.get(position).toString()+"32132",Toast.LENGTH_LONG);
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-
-            }
-        }));
+        recyclerView.addOnItemTouchListener(
+                new RecyclerTouchListener(getApplicationContext(), new RecyclerTouchListener.OnItemClickListener() {
+                    @Override public void onItemClick(View view, int position) {
+                        Toast.makeText(getApplicationContext(),listData.get(position).getTitle()+" Clicked",Toast.LENGTH_LONG).show();
+                    }
+                })
+        );
     }
 
     private void populateRecyclerView() {
@@ -137,7 +133,7 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
                                 int i;
                                 int length = notice.length();
                                 db.deleteClients();
-                                for(i = 0; i < length; i++){
+                                for (i = 0; i < length; i++) {
 
                                     JSONObject noticeValue = notice.getJSONObject(i);
                                     String title = noticeValue.getString("title");
@@ -146,8 +142,8 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
                                     String month = noticeValue.getString("month");
                                     String year = noticeValue.getString("year");
                                     //add data to db
-                                    db.addNotice(title,message,month,day,year);
-                                    progressBarStatus = (i*100) / length;
+                                    db.addNotice(title, message, month, day, year);
+                                    progressBarStatus = (i * 100) / length;
                                    /* progressBarbHandler.post(new Runnable() {
                                         public void run() {
                                             progressBar.setProgress(progressBarStatus);
@@ -234,7 +230,22 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
                 return super.onOptionsItemSelected(item);
         }
     }
+    @Override
+    public void onBackPressed()
+    {
+        if(count == 1)
+        {
+            count=0;
+            finish();
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "Press Back again to quit.", Toast.LENGTH_SHORT).show();
+            count++;
+        }
 
+        return;
+    }
     public static interface ClickListener{
         public void onClick(View view, int position);
         public void onLongClick(View view, int position);

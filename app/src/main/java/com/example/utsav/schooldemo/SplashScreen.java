@@ -32,6 +32,7 @@ import it.michelelacorte.elasticprogressbar.OptionView;
 
 public class SplashScreen extends AppCompatActivity {
     int i;
+    int count = 0;
     public static String TAG = SplashScreen.class.getSimpleName();
     private SQLiteHandler db;
     ElasticDownloadView mElasticDownloadView;
@@ -101,13 +102,13 @@ public class SplashScreen extends AppCompatActivity {
                                             //Set progress dynamically
                                             mElasticDownloadView.setProgress(mProgress);
                                             Log.d("Progress:", "" + mElasticDownloadView.getProgress());
-                                            if (mProgress >= 90) {
+                                            if (i >= length-1) {
                                                 mElasticDownloadView.success();
-
+                                                Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                                                startActivity(intent);
+                                                finish();
                                             }
-                                            Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                                            startActivity(intent);
-                                            finish();
+
                                         }
                                     });
 
@@ -191,5 +192,21 @@ public class SplashScreen extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed()
+    {
+        if(count == 1)
+        {
+            count=0;
+            finish();
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "Press Back again to quit.", Toast.LENGTH_SHORT).show();
+            count++;
+        }
+
+        return;
     }
 }
