@@ -70,7 +70,7 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
     private void fetchDataAndAddToDb(final String cid) {
         final String tag_string_req = "fetch data";
 
-        /*progressBar.setCancelable(true);
+       /* progressBar.setCancelable(true);
         progressBar.setMessage("Fetching data ...");
         progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressBar.setProgress(0);
@@ -110,6 +110,11 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
                                     //add data to db
                                     db.addNotice(title,message,month,day,year);
                                     progressBarStatus = (i*100) / length;
+                                   /* progressBarbHandler.post(new Runnable() {
+                                        public void run() {
+                                            progressBar.setProgress(progressBarStatus);
+                                        }
+                                    });*/
                                     //progressBar.setProgress(progressBarStatus);
                                 }
 
