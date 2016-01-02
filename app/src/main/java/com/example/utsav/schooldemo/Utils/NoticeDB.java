@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.utsav.schooldemo.NoticeData;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,26 +89,24 @@ public class NoticeDB extends SQLiteOpenHelper {
     /**
      * Getting user data from database
      * */
-    public List<String> getClientList() {
-        List<String> client = new ArrayList<String>();
-        String selectQuery = "SELECT  * FROM " + TABLE_NOTICES;
+    public List<NoticeData> getClientList() {
+        List<NoticeData> client = new ArrayList<NoticeData>();
+        List<NoticeData> array_list = new ArrayList<>();
 
+        //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor res =  db.rawQuery( "select * from "+TABLE_NOTICES, null );
+        res.moveToFirst();
 
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                client.add(cursor.getString(1));
-            } while (cursor.moveToNext());
+        while(res.isAfterLast() == false){
+            array_list.add(new NoticeData(res.getString(res.getColumnIndex(KEY_TTTLE)),
+                            res.getString(res.getColumnIndex(KEY_MESSAGE)),
+                            res.getString(res.getColumnIndex(KEY_DAY)),
+                            res.getString(res.getColumnIndex(KEY_MONTH)),
+                            res.getString(res.getColumnIndex(KEY_YEAR))));
+            res.moveToNext();
         }
-
-        cursor.close();
-        db.close();
-        // return user
-        Log.d(TAG, "Fetching user from Sqlite: " + client.toString());
-
-        return client;
+        return array_list;
     }
 
     /**

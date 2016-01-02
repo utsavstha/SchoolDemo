@@ -1,14 +1,10 @@
 package com.example.utsav.schooldemo;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -35,7 +31,7 @@ import it.michelelacorte.elasticprogressbar.ElasticDownloadView;
 import it.michelelacorte.elasticprogressbar.OptionView;
 
 public class SplashScreen extends AppCompatActivity {
-
+    int i;
     public static String TAG = SplashScreen.class.getSimpleName();
     private SQLiteHandler db;
     ElasticDownloadView mElasticDownloadView;
@@ -94,26 +90,38 @@ public class SplashScreen extends AppCompatActivity {
                                 //int count = jObj.getInt("count");
                                 final JSONArray client = jObj.getJSONArray("client");
                                 final int length = client.length();
-                                int i;
+
                                 for (i = 0; i < length; i++) {
                                     String name = client.getString(i);
                                     db.addClient(name);
-                                    mProgress = (i*100) / length;
+
+                                    handler.post(new Runnable() {
+                                        public void run() {
+                                            mProgress = (i*100) / length;
+                                            //Set progress dynamically
+                                            mElasticDownloadView.setProgress(mProgress);
+                                            Log.d("Progress:", "" + mElasticDownloadView.getProgress());
+                                            if (mProgress >= 90) {
+                                                mElasticDownloadView.success();
+
+                                            }
+                                            Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    });
 
                                 }
-                                if (i == length-1) {
-                                    mElasticDownloadView.success();
 
-                                }
 
 
                                 // Inserting row in users table
                                 //  db.addUser(name, email, uid, created_at);
 
                                  //Launch main activity
-                                 Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                                 /*Intent intent = new Intent(SplashScreen.this, MainActivity.class);
                                  startActivity(intent);
-                                 finish();
+                                 finish();*/
                             } else {
                                 // Error in login. Get the error message
                                 String errorMsg = jObj.getString("error_msg");
@@ -153,17 +161,11 @@ public class SplashScreen extends AppCompatActivity {
                 AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
 
-                while (mProgress < 100) {
+               // while (mProgress < 100) {
                     // progressStatus = downloadFile();
-                    handler.post(new Runnable() {
-                        public void run() {
-                            //Set progress dynamically
-                            mElasticDownloadView.setProgress(mProgress);
-                            Log.d("Progress:", "" + mElasticDownloadView.getProgress());
-                        }
-                    });
-                    mProgress++;
-                }
+
+                   // mProgress++;
+           //     }
 
             }
         }, 1000);

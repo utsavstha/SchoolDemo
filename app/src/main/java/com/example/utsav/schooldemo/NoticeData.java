@@ -4,24 +4,18 @@ package com.example.utsav.schooldemo;
  * Created by utsav on 1/2/2016.
  */
 public class NoticeData {
-    private int id;
     private String title;
     private String message;
     private String day;
     private String month;
     private String year;
 
-    public NoticeData(int id, String title, String message, String day, String month, String year) {
-        this.id = id;
+    public NoticeData(String title, String message, String day, String month, String year) {
         this.title = title;
         this.message = message;
         this.day = day;
         this.month = month;
         this.year = year;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setTitle(String title) {
@@ -42,10 +36,6 @@ public class NoticeData {
 
     public void setYear(String year) {
         this.year = year;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getTitle() {

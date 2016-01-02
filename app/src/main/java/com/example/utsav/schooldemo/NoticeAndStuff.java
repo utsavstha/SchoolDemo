@@ -8,9 +8,13 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -18,6 +22,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.utsav.schooldemo.Utils.NoticeDB;
+import com.example.utsav.schooldemo.Utils.RVAdapter;
+import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
 import com.example.utsav.schooldemo.Utils.SQLiteHandler;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
@@ -27,16 +33,21 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NoticeAndStuff extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+    private RecyclerView recyclerView;  //recycler view variable
+    private List<NoticeData> listData = new ArrayList<>() ; //creating list of the Notice data class
     public static String TAG = NoticeAndStuff.class.getSimpleName();
     private NavigationView mDrawer;   //object to initialise navigation view
     private DrawerLayout mDrawerLayout; //object that holds id to drawer layout
     private ActionBarDrawerToggle mDrawerToggle;
-    SessionManager session;
+    //SessionManager session;
     NoticeDB db;
+    SessionManager session;
     private String cid;
     private ProgressDialog progressBar;
     private int progressBarStatus = 0;
@@ -45,17 +56,20 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notice_and_stuff);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar1);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mDrawer = (NavigationView) findViewById(R.id.main_drawer);//initialising navigation view
         mDrawer.setNavigationItemSelectedListener(this);           //tells this activity will handle click events
+        toolbar.showOverflowMenu();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        recyclerView = (RecyclerView) findViewById(R.id.rv_list);
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
                 toolbar,
                 R.string.drawer_open,
                 R.string.drawer_close);//needed to show the hamburger icon
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+       // session = new SessionManager(getApplicationContext());
         progressBar = new ProgressDialog(getApplicationContext());
          /*linking drawer layout and drawer toggle
         drawer toggle keeps the track of who is active on the screen drawer or main content*/
@@ -65,6 +79,30 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
         cid = session.getCid();
         db = new NoticeDB(getApplicationContext());
         fetchDataAndAddToDb(cid);
+        LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext()); //this will make the recycler view work as list view
+
+        recyclerView.setLayoutManager(llm);
+        populateRecyclerView();
+
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Toast.makeText(getApplicationContext(),listData.get(position).toString()+"32132",Toast.LENGTH_LONG);
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+    }
+
+    private void populateRecyclerView() {
+        listData = db.getClientList();
+
+        RVAdapter adapter = new RVAdapter(listData);
+
+        recyclerView.setAdapter(adapter);
     }
 
     private void fetchDataAndAddToDb(final String cid) {
@@ -98,7 +136,7 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
                                 JSONArray notice = jObj.getJSONArray("notice");
                                 int i;
                                 int length = notice.length();
-
+                                db.deleteClients();
                                 for(i = 0; i < length; i++){
 
                                     JSONObject noticeValue = notice.getJSONObject(i);
@@ -175,5 +213,30 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
         }
 
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_notice_and_stuff, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                // Red item was selected
+                session.setLogin(false, "0");
+                startActivity(new Intent(NoticeAndStuff.this, SplashScreen.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public static interface ClickListener{
+        public void onClick(View view, int position);
+        public void onLongClick(View view, int position);
     }
 }
