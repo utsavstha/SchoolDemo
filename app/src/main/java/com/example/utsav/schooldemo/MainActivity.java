@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements
                         //Launch main activity
                         Intent intent = new Intent(MainActivity.this, NoticeAndStuff.class);
                         startActivity(intent);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                         finish();
                     } else {
                         // Error in login. Get the error message

@@ -2,6 +2,7 @@ package com.example.utsav.schooldemo;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -83,7 +84,7 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext()); //this will make the recycler view work as list view
 
         recyclerView.setLayoutManager(llm);
-        populateRecyclerView();
+
         recyclerView.addOnItemTouchListener(
                 new RecyclerTouchListener(getApplicationContext(), new RecyclerTouchListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
@@ -93,24 +94,10 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
         );
     }
 
-    private void populateRecyclerView() {
-        listData = db.getClientList();
 
-        RVAdapter adapter = new RVAdapter(listData);
-
-        recyclerView.setAdapter(adapter);
-    }
-
-    private void fetchDataAndAddToDb(final String cid) {
+    private  void fetchDataAndAddToDb(final String cid) {
         final String tag_string_req = "fetch data";
 
-       /* progressBar.setCancelable(true);
-        progressBar.setMessage("Fetching data ...");
-        progressBar.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progressBar.setProgress(0);
-        progressBar.setMax(100);
-        progressBar.show();
-        progressBarStatus = 0;*/
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -151,6 +138,7 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
                                     });*/
                                     //progressBar.setProgress(progressBarStatus);
                                 }
+                                populateRecyclerView();
 
                             } else {
                                 // Error in login. Get the error message
@@ -224,7 +212,9 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
             case R.id.action_logout:
                 // Red item was selected
                 session.setLogin(false, "0");
+                db.deleteClients();
                 startActivity(new Intent(NoticeAndStuff.this, SplashScreen.class));
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -250,4 +240,12 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
         public void onClick(View view, int position);
         public void onLongClick(View view, int position);
     }
+    private void populateRecyclerView() {
+        listData = db.getClientList();
+
+        RVAdapter adapter = new RVAdapter(listData);
+
+        recyclerView.setAdapter(adapter);
+    }
+
 }

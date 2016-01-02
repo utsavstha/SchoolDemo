@@ -32,7 +32,7 @@ import it.michelelacorte.elasticprogressbar.OptionView;
 
 public class SplashScreen extends AppCompatActivity {
     int i;
-    int count = 0;
+   static int count = 0;
     public static String TAG = SplashScreen.class.getSimpleName();
     private SQLiteHandler db;
     ElasticDownloadView mElasticDownloadView;
@@ -106,6 +106,7 @@ public class SplashScreen extends AppCompatActivity {
                                                 mElasticDownloadView.success();
                                                 Intent intent = new Intent(SplashScreen.this, MainActivity.class);
                                                 startActivity(intent);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                                 finish();
                                             }
 
