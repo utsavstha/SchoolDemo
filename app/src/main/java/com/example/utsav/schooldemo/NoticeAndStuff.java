@@ -22,10 +22,12 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.utsav.schooldemo.Utils.Demo;
 import com.example.utsav.schooldemo.Utils.NoticeDB;
 import com.example.utsav.schooldemo.Utils.RVAdapter;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
 import com.example.utsav.schooldemo.Utils.SQLiteHandler;
+import com.example.utsav.schooldemo.Utils.SubsDB;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;
@@ -40,20 +42,23 @@ import java.util.List;
 import java.util.Map;
 
 public class NoticeAndStuff extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+    public static String TAG = NoticeAndStuff.class.getSimpleName();
     private RecyclerView recyclerView;  //recycler view variable
     private List<NoticeData> listData = new ArrayList<>() ; //creating list of the Notice data class
-    public static String TAG = NoticeAndStuff.class.getSimpleName();
+
     private NavigationView mDrawer;   //object to initialise navigation view
     private DrawerLayout mDrawerLayout; //object that holds id to drawer layout
     private ActionBarDrawerToggle mDrawerToggle;
     //SessionManager session;
     NoticeDB db;
+    SubsDB subsDB;
     int count = 0;
     SessionManager session;
     private String cid;
     private ProgressDialog progressBar;
     private int progressBarStatus = 0;
     private Handler progressBarbHandler = new Handler();
+    List<String> subsData = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +68,7 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
         mDrawer = (NavigationView) findViewById(R.id.main_drawer);//initialising navigation view
         mDrawer.setNavigationItemSelectedListener(this);           //tells this activity will handle click events
         toolbar.showOverflowMenu();
+        subsDB = new SubsDB(getApplicationContext());
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         recyclerView = (RecyclerView) findViewById(R.id.rv_list);
         mDrawerToggle = new ActionBarDrawerToggle(this,
@@ -71,8 +77,6 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
                 R.string.drawer_open,
                 R.string.drawer_close);//needed to show the hamburger icon
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-       // session = new SessionManager(getApplicationContext());
-        progressBar = new ProgressDialog(getApplicationContext());
          /*linking drawer layout and drawer toggle
         drawer toggle keeps the track of who is active on the screen drawer or main content*/
         mDrawerToggle.syncState(); //Synchronizes the state of hamburger icon
@@ -80,20 +84,33 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
         session = new SessionManager(getApplicationContext());
         cid = session.getCid();
         db = new NoticeDB(getApplicationContext());
+        subsData = subsDB.getSubsList();
         fetchDataAndAddToDb(cid);
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext()); //this will make the recycler view work as list view
 
         recyclerView.setLayoutManager(llm);
-
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                populateRecyclerView();
+            }
+        },2000);    //shift this to fetchdb method and manage the error cases
         recyclerView.addOnItemTouchListener(
                 new RecyclerTouchListener(getApplicationContext(), new RecyclerTouchListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
-                        Toast.makeText(getApplicationContext(),listData.get(position).getTitle()+" Clicked",Toast.LENGTH_LONG).show();
+
+                        Intent intent = new Intent(NoticeAndStuff.this, Details.class);
+                        intent.putExtra("title",listData.get(position).getTitle());
+                        intent.putExtra("date", listData.get(position).getDay()+" "+
+                                                listData.get(position).getMonth()+" "+
+                                                listData.get(position).getYear());
+                        intent.putExtra("message",listData.get(position).getMessage());
+
+                        startActivity(intent);
                     }
                 })
         );
     }
-
 
     private  void fetchDataAndAddToDb(final String cid) {
         final String tag_string_req = "fetch data";
@@ -138,7 +155,7 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
                                     });*/
                                     //progressBar.setProgress(progressBarStatus);
                                 }
-                                populateRecyclerView();
+
 
                             } else {
                                 // Error in login. Get the error message
@@ -167,9 +184,19 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
                     @Override
                     protected Map<String, String> getParams() {
                         // Posting parameters to login url
+                        String subname = "";
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("tag", "notice");
                         params.put("cid", cid);
+
+                        if(subsData.size() >= 1){
+                            for(int i = 0; i < subsData.size(); i++){
+                                subname +=  subsData.get(i) + "+";
+                            }
+                            String finalData = subname.replaceAll(" ", "_");
+                            params.put("subname",finalData);
+                        }
+
 
                         return params;
                     }
@@ -180,7 +207,7 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
                 AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
             }
-        }, 1000);
+        }, 1);
 
 
     }
@@ -190,8 +217,8 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
         Intent intent = null;
         if(item.getItemId() == R.id.news){
             //intent = new Intent(NoticeAndStuff.this, )
-        }else if(item.getItemId() == R.id.routines){
-
+        }else if(item.getItemId() == R.id.abouts){
+            startActivity(new Intent(NoticeAndStuff.this, Abouts.class));
         }else{
             //for contacts
         }
@@ -212,9 +239,13 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
             case R.id.action_logout:
                 // Red item was selected
                 session.setLogin(false, "0");
-                db.deleteClients();
+                //db.deleteClients();
                 startActivity(new Intent(NoticeAndStuff.this, SplashScreen.class));
                 finish();
+                return true;
+            case R.id.action_subs:
+                startActivity(new Intent(NoticeAndStuff.this, Subscriptions.class));
+                //finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -3,4 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".SplashScreen">
     <item android:id="@+id/action_logout" android:title="@string/Logout"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_subs" android:title="@string/Subs"
+        android:orderInCategory="100" app:showAsAction="never" />
 </menu>

@@ -7,9 +7,9 @@
         android:id="@+id/notice_board"
         android:title="Notice Board"/>
     <item
-        android:id="@+id/routines"
-        android:title="Class Routines"/>
+        android:id="@+id/abouts"
+        android:title="Abouts"/>
     <item
-        android:id="@+id/contacts"
-        android:title="Contacts"/>
+        android:id="@+id/feed_back"
+        android:title="Feed Backs"/>
 </menu>

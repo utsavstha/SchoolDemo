@@ -26,6 +26,7 @@ public class SessionManager {
 
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
     private static final String KEY_CID = "cid";
+    private static final String KEY_SUBS = "subscription";
 
     public SessionManager(Context context) {
         this._context = context;
@@ -42,13 +43,15 @@ public class SessionManager {
 
         Log.d(TAG, "User login session modified!");
     }
+    public void setSubscription(String name){
+        editor.putString(KEY_SUBS, name);
+        editor.commit();
+    }
 
     public boolean isLoggedIn(){
         return pref.getBoolean(KEY_IS_LOGGEDIN, false);
     }
-    public String getCid(){
-        return pref.getString(KEY_CID, "NOT FOUND");
-
-    }
+    public String getCid(){ return pref.getString(KEY_CID, "NOT FOUND"); }
+    public String getSubscription(){   return  pref.getString(KEY_SUBS,"empty");}
 
 }

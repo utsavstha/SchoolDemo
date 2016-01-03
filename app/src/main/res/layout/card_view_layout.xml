@@ -56,6 +56,9 @@
                     android:id="@+id/message_notice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:scrollHorizontally="true"
+                    android:ellipsize="end"
                     android:text="Reopening soon"
                     android:textSize="13dp" />
 
