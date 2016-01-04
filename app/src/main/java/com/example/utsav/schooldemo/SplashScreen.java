@@ -115,15 +115,6 @@ public class SplashScreen extends AppCompatActivity {
 
                                 }
 
-
-
-                                // Inserting row in users table
-                                //  db.addUser(name, email, uid, created_at);
-
-                                 //Launch main activity
-                                 /*Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                                 startActivity(intent);
-                                 finish();*/
                             } else {
                                 // Error in login. Get the error message
                                 String errorMsg = jObj.getString("error_msg");

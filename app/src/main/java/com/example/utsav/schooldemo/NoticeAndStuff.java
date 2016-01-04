@@ -2,11 +2,13 @@ package com.example.utsav.schooldemo;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +33,7 @@ import com.example.utsav.schooldemo.Utils.SubsDB;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,23 +44,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NoticeAndStuff extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class NoticeAndStuff extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        SwipeRefreshLayout.OnRefreshListener{
     public static String TAG = NoticeAndStuff.class.getSimpleName();
     private RecyclerView recyclerView;  //recycler view variable
     private List<NoticeData> listData = new ArrayList<>() ; //creating list of the Notice data class
-
+    private SwipeRefreshLayout swipeRefreshLayout;
     private NavigationView mDrawer;   //object to initialise navigation view
     private DrawerLayout mDrawerLayout; //object that holds id to drawer layout
     private ActionBarDrawerToggle mDrawerToggle;
-    //SessionManager session;
     NoticeDB db;
     SubsDB subsDB;
     int count = 0;
     SessionManager session;
     private String cid;
-    private ProgressDialog progressBar;
-    private int progressBarStatus = 0;
     private Handler progressBarbHandler = new Handler();
+    CircularProgressView progressView;
     List<String> subsData = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +69,13 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
         setSupportActionBar(toolbar);
         mDrawer = (NavigationView) findViewById(R.id.main_drawer);//initialising navigation view
         mDrawer.setNavigationItemSelectedListener(this);           //tells this activity will handle click events
+        swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_to_refresh);
         toolbar.showOverflowMenu();
+        swipeRefreshLayout.setOnRefreshListener(this);
         subsDB = new SubsDB(getApplicationContext());
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         recyclerView = (RecyclerView) findViewById(R.id.rv_list);
+        progressView = (CircularProgressView) findViewById(R.id.progress_view);
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
                 toolbar,
@@ -85,16 +90,26 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
         cid = session.getCid();
         db = new NoticeDB(getApplicationContext());
         subsData = subsDB.getSubsList();
-        fetchDataAndAddToDb(cid);
+        progressView.setColor(Color.parseColor("#D32F2F"));
+        if(session.getFetchData()){
+            fetchDataAndAddToDb(cid);
+            progressView.setVisibility(View.VISIBLE);
+            progressView.startAnimation();
+            recyclerView.setVisibility(View.GONE);
+            session.setKeyFetch(false);
+        }else{
+            populateRecyclerView();
+        }
+
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext()); //this will make the recycler view work as list view
 
         recyclerView.setLayoutManager(llm);
-        new Handler().postDelayed(new Runnable() {
+        /*new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 populateRecyclerView();
             }
-        },2000);    //shift this to fetchdb method and manage the error cases
+        },2000);    //shift this to fetchdb method and manage the error cases*/
         recyclerView.addOnItemTouchListener(
                 new RecyclerTouchListener(getApplicationContext(), new RecyclerTouchListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
@@ -114,7 +129,7 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
 
     private  void fetchDataAndAddToDb(final String cid) {
         final String tag_string_req = "fetch data";
-
+        //swipeRefreshLayout.setRefreshing(true);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -147,19 +162,23 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
                                     String year = noticeValue.getString("year");
                                     //add data to db
                                     db.addNotice(title, message, month, day, year);
-                                    progressBarStatus = (i * 100) / length;
                                    /* progressBarbHandler.post(new Runnable() {
                                         public void run() {
                                             progressBar.setProgress(progressBarStatus);
                                         }
                                     });*/
                                     //progressBar.setProgress(progressBarStatus);
+                                    populateRecyclerView();
                                 }
 
 
                             } else {
                                 // Error in login. Get the error message
                                 String errorMsg = jObj.getString("error_msg");
+                                //if(!session.getFetchData()){
+                                    populateRecyclerView();
+                                //}
+
                                 Toast.makeText(getApplicationContext(),
                                         errorMsg, Toast.LENGTH_LONG).show();
                             }
@@ -209,6 +228,9 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
             }
         }, 1);
 
+        if(swipeRefreshLayout.isRefreshing()){
+            swipeRefreshLayout.setRefreshing(false);
+        }
 
     }
 
@@ -219,8 +241,8 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
             //intent = new Intent(NoticeAndStuff.this, )
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(NoticeAndStuff.this, Abouts.class));
-        }else{
-            //for contacts
+        }else if(item.getItemId() == R.id.feed_back){
+            startActivity(new Intent(NoticeAndStuff.this, FeedBack.class));
         }
 
         return true;
@@ -267,13 +289,21 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
 
         return;
     }
+
+    @Override
+    public void onRefresh() {
+        fetchDataAndAddToDb(cid);
+    }
+
     public static interface ClickListener{
         public void onClick(View view, int position);
         public void onLongClick(View view, int position);
     }
     private void populateRecyclerView() {
         listData = db.getClientList();
-
+        progressView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        //progressView.
         RVAdapter adapter = new RVAdapter(listData);
 
         recyclerView.setAdapter(adapter);

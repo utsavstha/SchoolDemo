@@ -27,6 +27,7 @@ public class SessionManager {
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
     private static final String KEY_CID = "cid";
     private static final String KEY_SUBS = "subscription";
+    private static final String KEY_FETCH = "fetchData";
 
     public SessionManager(Context context) {
         this._context = context;
@@ -43,15 +44,17 @@ public class SessionManager {
 
         Log.d(TAG, "User login session modified!");
     }
-    public void setSubscription(String name){
-        editor.putString(KEY_SUBS, name);
+
+    public void setKeyFetch(boolean fetchData){
+        editor.putBoolean(KEY_FETCH, fetchData);
         editor.commit();
+        Log.d(TAG, "Fetech data set to" + fetchData+"");
     }
 
     public boolean isLoggedIn(){
         return pref.getBoolean(KEY_IS_LOGGEDIN, false);
     }
     public String getCid(){ return pref.getString(KEY_CID, "NOT FOUND"); }
-    public String getSubscription(){   return  pref.getString(KEY_SUBS,"empty");}
+    public boolean getFetchData(){ return pref.getBoolean(KEY_FETCH, false); }
 
 }

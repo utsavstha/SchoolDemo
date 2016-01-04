@@ -1,5 +1,6 @@
 package com.example.utsav.schooldemo;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -177,7 +179,41 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_notice_and_stuff, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                // Red item was selected
+                sessionManager.setLogin(false, "0");
+                //db.deleteClients();
+                startActivity(new Intent(Abouts.this, SplashScreen.class));
+                finish();
+                return true;
+            case R.id.action_subs:
+                startActivity(new Intent(Abouts.this, Subscriptions.class));
+                //finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        return false;
+        Intent intent = null;
+        if(item.getItemId() == R.id.news){
+            //intent = new Intent(NoticeAndStuff.this, )
+        }else if(item.getItemId() == R.id.notice_board){
+            startActivity(new Intent(Abouts.this, NoticeAndStuff.class));
+        }else if(item.getItemId() == R.id.feed_back){
+            startActivity(new Intent(Abouts.this, FeedBack.class));
+        }
+        return true;
     }
 }

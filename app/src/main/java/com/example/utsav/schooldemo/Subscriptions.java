@@ -210,6 +210,8 @@ public class Subscriptions extends AppCompatActivity {
     public void onBackPressed()
     {
         startActivity(new Intent(Subscriptions.this, NoticeAndStuff.class));
+        session.setKeyFetch(true);
+        finish();
     }
 
 }

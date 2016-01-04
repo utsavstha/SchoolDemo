@@ -1,8 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".SplashScreen">
-    <item android:id="@+id/action_logout" android:title="@string/Logout"
-        android:orderInCategory="100" app:showAsAction="never" />
-    <item android:id="@+id/action_subs" android:title="@string/Subs"
-        android:orderInCategory="100" app:showAsAction="never" />
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".SplashScreen">
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="100"
+        android:title="@string/Logout"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_subs"
+        android:orderInCategory="100"
+        android:title="@string/Subs"
+        app:showAsAction="never" />
 </menu>
