@@ -55,6 +55,6 @@ public class SessionManager {
         return pref.getBoolean(KEY_IS_LOGGEDIN, false);
     }
     public String getCid(){ return pref.getString(KEY_CID, "NOT FOUND"); }
-    public boolean getFetchData(){ return pref.getBoolean(KEY_FETCH, false); }
+    public boolean getFetchData(){ return pref.getBoolean(KEY_FETCH, true); }
 
 }

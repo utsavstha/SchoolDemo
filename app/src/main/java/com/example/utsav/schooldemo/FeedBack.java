@@ -22,6 +22,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.utsav.schooldemo.Utils.NoticeDB;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;
@@ -40,6 +41,7 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
     private ActionBarDrawerToggle mDrawerToggle;
     TextView subject, message,name;
     SessionManager sessionManager;
+    NoticeDB db;
     Button send;
     int count = 0;
     @Override
@@ -48,7 +50,7 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
         setContentView(R.layout.activity_feed_back);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        db = new NoticeDB(getApplicationContext());
         mDrawer = (NavigationView) findViewById(R.id.main_drawer_feedback);//initialising navigation view
         mDrawer.setNavigationItemSelectedListener(this);           //tells this activity will handle click events
         toolbar.showOverflowMenu();
@@ -73,6 +75,7 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
             @Override
             public void onClick(View v) {
                 final String tag_string_req = "send feed back";
+                send.setText("Please wait..");
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -91,24 +94,15 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
 
                                     // Check for error node in json
                                     if (!error) {
-                                        // data successfully fetched
-                                        JSONArray client = jObj.getJSONArray("client");
-                                        //Hard coded by the array index
-                                        JSONObject value = client.getJSONObject(0);
-                                        name.setText(value.getString("name"));
-
-
-
-
-
-
-
-
-
+                                        String msg = jObj.getString("msg");
+                                        if(!msg.isEmpty()){
+                                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                                            send.setText("Send");
+                                        }
 
                                     } else {
                                         // Error in login. Get the error message
-                                        String errorMsg = jObj.getString("error_msg");
+                                        String errorMsg = jObj.getString("msg");
                                         Toast.makeText(getApplicationContext(),
                                                 errorMsg, Toast.LENGTH_LONG).show();
                                     }
@@ -135,11 +129,13 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
                                 // Posting parameters to login url
                                 Map<String, String> params = new HashMap<String, String>();
                                 params.put("tag", "feedback");
-                                params.put("subject",subject.getText().toString().trim());
-                                params.put("msg", message.getText().toString().trim());
-                                params.put("name", message.getText().toString().trim());
+                                String finalSubject = subject.getText().toString().trim().replaceAll(" ", "_");
+                                params.put("title",finalSubject);
+                                String finalMessage = message.getText().toString().trim().replaceAll(" ", "_");
+                                params.put("msg",finalMessage );
+                                String finalName = name.getText().toString().trim().replaceAll(" ", "_");
+                                params.put("name", finalName);
                                 params.put("cid", sessionManager.getCid());
-
 
                                 return params;
                             }
@@ -197,7 +193,8 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
             case R.id.action_logout:
                 // Red item was selected
                 sessionManager.setLogin(false, "0");
-                //db.deleteClients();
+                sessionManager.setKeyFetch(true);
+                db.deleteClients();
                 startActivity(new Intent(FeedBack.this, SplashScreen.class));
                 finish();
                 return true;

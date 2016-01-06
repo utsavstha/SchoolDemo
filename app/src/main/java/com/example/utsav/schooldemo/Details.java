@@ -22,6 +22,15 @@ public class Details extends AppCompatActivity {
         setContentView(R.layout.activity_details);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Details.this, NoticeAndStuff.class));
+                finish();
+            }
+        });
         title = (TextView) findViewById(R.id.title_details);
         date = (TextView)findViewById(R.id.date_details);
         message = (TextView) findViewById(R.id.message_details);

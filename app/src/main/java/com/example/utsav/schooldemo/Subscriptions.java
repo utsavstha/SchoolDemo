@@ -44,6 +44,7 @@ public class Subscriptions extends AppCompatActivity {
     private Set<Demo> checkedSet = new HashSet<>();
     SessionManager session;
     SubsDB subsDB;
+    //boolean isCheck = false;
     List<String> data = new ArrayList();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,17 @@ public class Subscriptions extends AppCompatActivity {
         setContentView(R.layout.activity_subscriptions);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Subscriptions.this, NoticeAndStuff.class));
+                session.setKeyFetch(true);
+                finish();
+            }
+        });
         //Toast.makeText(getApplicationContext(),"All previous Subscriptions have been cleared, choose again to subscribe",Toast.LENGTH_LONG).show();
         subsDB = new SubsDB(getApplicationContext());
         //subsDB.deleteClients();
@@ -175,32 +187,40 @@ public class Subscriptions extends AppCompatActivity {
                     checkBox.setUncheckStatus();
                 }
                 data = subsDB.getSubsList();
-              //  for(int i = 0; i < data.size(); i++){
-                    if(data.contains(subsData.get(position).getContent())){
-                         checkBox.setChecked(true);
-                       // Log.e(TAG, data.get(position));
-                    }
-                    else {
-                        //checkBox.setChecked(false); //has animation
-                        checkBox.setChecked(false);
-                        //checkedSet.add(subsData.get(position));
+                //  for(int i = 0; i < data.size(); i++){
+                if (data.contains(subsData.get(position).getContent())) {
+                    checkBox.setChecked(true);
+                    // Log.e(TAG, data.get(position));
+                } else {
+                    //checkBox.setChecked(false); //has animation
+                    checkBox.setChecked(false);
+                    //checkedSet.add(subsData.get(position));
 
-                    }
-               // }
-               // subsDB.deleteClients();
+                }
+                // }
+                // subsDB.deleteClients();
                 checkBox.setOnCheckedChangeListener(new AnimateCheckBox.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(View buttonView, boolean isChecked) {
                         if (isChecked) {
+                            //checkBox.setChecked(isChecked);
                             checkedSet.add(item);
                             subsDB.addSubs(item.getContent());
-                            //Toast.makeText(getApplicationContext(),item.getContent(),Toast.LENGTH_LONG).show();
                         } else {
+                            //checkBox.setChecked(isCheck);
                             checkedSet.remove(item);
                             subsDB.deleteSubs(item.getContent());
+                            //Toast.makeText(getApplicationContext(), isCheck + "not checked" , Toast.LENGTH_LONG).show();
                         }
                     }
                 });
+                /*text.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                    }
+                });*/
 
                 return convertView;
             }

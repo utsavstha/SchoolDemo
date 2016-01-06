@@ -4,7 +4,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="password_hint">Password</string>
     <string name="button_login_text">Login</string>
-    <string name="title_activity_notice_and_stuff">NoticeAndStuff</string>
+    <string name="title_activity_notice_and_stuff">Notice Board</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="Logout">Log out</string>

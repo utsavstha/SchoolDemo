@@ -1,6 +1,8 @@
 package com.example.utsav.schooldemo;
 
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -13,9 +15,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -44,7 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class NoticeAndStuff extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+public class NoticeAndStuff extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
         SwipeRefreshLayout.OnRefreshListener{
     public static String TAG = NoticeAndStuff.class.getSimpleName();
     private RecyclerView recyclerView;  //recycler view variable
@@ -129,7 +134,12 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
 
     private  void fetchDataAndAddToDb(final String cid) {
         final String tag_string_req = "fetch data";
-        //swipeRefreshLayout.setRefreshing(true);
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
+            }
+        });
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -251,8 +261,32 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_notice_and_stuff, menu);
-        return true;
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_notice_and_stuff, menu);
+        // getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchManager searchManager = (SearchManager) NoticeAndStuff.this.getSystemService(Context.SEARCH_SERVICE);
+
+        SearchView searchView = null;
+        if (searchItem != null) {
+            searchView = (SearchView) searchItem.getActionView();
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    Toast.makeText(getApplicationContext(),newText,Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+            });
+        }
+        if (searchView != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(NoticeAndStuff.this.getComponentName()));
+        }
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -261,7 +295,8 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
             case R.id.action_logout:
                 // Red item was selected
                 session.setLogin(false, "0");
-                //db.deleteClients();
+                db.deleteClients();
+                session.setKeyFetch(true);
                 startActivity(new Intent(NoticeAndStuff.this, SplashScreen.class));
                 finish();
                 return true;
@@ -307,6 +342,7 @@ public class NoticeAndStuff extends AppCompatActivity implements NavigationView.
         RVAdapter adapter = new RVAdapter(listData);
 
         recyclerView.setAdapter(adapter);
+        swipeRefreshLayout.setRefreshing(false);
     }
 
 }

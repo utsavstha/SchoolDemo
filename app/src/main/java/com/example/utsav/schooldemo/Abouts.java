@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +12,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +19,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.utsav.schooldemo.Utils.NoticeDB;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;
@@ -39,6 +37,7 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
     private DrawerLayout mDrawerLayout; //object that holds id to drawer layout
     private ActionBarDrawerToggle mDrawerToggle;
     TextView name,email, contact, about, website;
+    NoticeDB db;
     int count = 0;
     SessionManager sessionManager;
     @Override
@@ -50,6 +49,7 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         mDrawer = (NavigationView) findViewById(R.id.main_drawer_aboouts);//initialising navigation view
         mDrawer.setNavigationItemSelectedListener(this);           //tells this activity will handle click events
         toolbar.showOverflowMenu();
+        db = new NoticeDB(getApplicationContext());
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_abouts);
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
@@ -191,7 +191,8 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
             case R.id.action_logout:
                 // Red item was selected
                 sessionManager.setLogin(false, "0");
-                //db.deleteClients();
+                db.deleteClients();
+                sessionManager.setKeyFetch(true);
                 startActivity(new Intent(Abouts.this, SplashScreen.class));
                 finish();
                 return true;
