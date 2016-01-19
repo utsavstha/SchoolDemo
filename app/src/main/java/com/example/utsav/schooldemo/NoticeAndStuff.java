@@ -241,6 +241,8 @@ public class NoticeAndStuff extends AppCompatActivity implements
             startActivity(new Intent(NoticeAndStuff.this, Abouts.class));
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(NoticeAndStuff.this, FeedBack.class));
+        }else if (item.getItemId() == R.id.downloads){
+            startActivity(new Intent(NoticeAndStuff.this, DownloadFiles.class));
         }
 
         return true;

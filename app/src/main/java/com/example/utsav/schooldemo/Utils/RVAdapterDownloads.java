@@ -31,21 +31,21 @@ public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.
         TextView day;
         TextView monthYear;
         TextView title;
-        TextView message;
+        TextView size;
 
         DataViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView) itemView.findViewById(R.id.cardView);
-            day = (TextView)itemView.findViewById(R.id.day_notice);
-            monthYear = (TextView)itemView.findViewById(R.id.month_year_notice);
-            title = (TextView)itemView.findViewById(R.id.title_notice);
-            message = (TextView)itemView.findViewById(R.id.message_notice);
+            cv = (CardView) itemView.findViewById(R.id.cardView_downloads);
+            day = (TextView)itemView.findViewById(R.id.day_downloads);
+            monthYear = (TextView)itemView.findViewById(R.id.month_year_downloads);
+            title = (TextView)itemView.findViewById(R.id.title_downloads);
+            size = (TextView)itemView.findViewById(R.id.size_downloads);
         }
     }
 
     @Override
     public RVAdapterDownloads.DataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_view_layout, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.downloads_recyclerview, parent, false);
         DataViewHolder pvh = new DataViewHolder(v);
         return pvh;
     }
@@ -60,7 +60,7 @@ public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.
 
         holder.monthYear.setText(mY);
         holder.title.setText(data.get(position).getTitle());
-        holder.message.setText(data.get(position).getMessage());
+        holder.size.setText(data.get(position).getSize()+" kb");
     }
 
     @Override

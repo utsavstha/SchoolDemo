@@ -7,6 +7,9 @@
         android:id="@+id/notice_board"
         android:title="Notice Board"/>
     <item
+        android:id="@+id/downloads"
+        android:title="Downloads"/>
+    <item
         android:id="@+id/abouts"
         android:title="Abouts"/>
     <item

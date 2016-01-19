@@ -32,12 +32,14 @@ public class DownloadsDB extends SQLiteOpenHelper {
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
+    private static final String KEY_FILE_ID = "fileid";
     private static final String KEY_TTTLE = "title";
     private static final String KEY_LINK = "link";
-    private static final String KEY_SIZE = "link";
+    private static final String KEY_SIZE = "size";
     private static final String KEY_MONTH = "month";
     private static final String KEY_DAY = "day";
     private static final String KEY_YEAR = "year";
+    private static final String KEY_PATH = "path";
 
     public DownloadsDB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -49,11 +51,13 @@ public class DownloadsDB extends SQLiteOpenHelper {
         String CREATE_NOTICE_TABLE =
                 "CREATE TABLE " + TABLE_NOTICES +
                         "(" + KEY_ID + " INTEGER PRIMARY KEY,"
+                        + KEY_FILE_ID + " TEXT,"
                         + KEY_TTTLE + " TEXT,"
                         + KEY_LINK + " TEXT,"                //in case of weird error change this data type
-                        + KEY_SIZE + "TEXY,"
-                        + KEY_MONTH + " TEXT,"
+                        + KEY_SIZE + " TEXT,"
+                        + KEY_PATH + " TEXT,"
                         + KEY_DAY + " TEXT,"
+                        + KEY_MONTH + " TEXT,"
                         + KEY_YEAR + " TEXT" + ")";
         db.execSQL(CREATE_NOTICE_TABLE);
 
@@ -73,21 +77,23 @@ public class DownloadsDB extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      * */
-    public void addDownloadList(String title, String link, String size, String month, String day, String year) {
+    public void addDownloadList(int _id,String title, String link, String size, String path ,String day, String month, String year) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_FILE_ID, _id); // Title
         values.put(KEY_TTTLE, title); // Title
         values.put(KEY_LINK, link); // Link
-        values.put(KEY_SIZE,size );
-        values.put(KEY_MONTH, month); // month
-        values.put(KEY_DAY, day); // day
+        values.put(KEY_SIZE,size);
+        values.put(KEY_PATH,path);
+        values.put(KEY_DAY, month); // month
+        values.put(KEY_MONTH, day); // day
         values.put(KEY_YEAR, year); // year
         // Inserting Row
         long id = db.insert(TABLE_NOTICES, null, values);
         db.close(); // Closing database connection
 
-        Log.d(TAG, "New user inserted into sqlite: " + id);
+        Log.d(TAG, "New record inserted into sqlite: " + id);
     }
 
     /**
@@ -99,18 +105,21 @@ public class DownloadsDB extends SQLiteOpenHelper {
 
         //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from "+TABLE_NOTICES, null );
+        Cursor res =  db.rawQuery("select * from " + TABLE_NOTICES, null);
         res.moveToFirst();
 
         while(res.isAfterLast() == false){
-            array_list.add(new DownloadData(res.getString(res.getColumnIndex(KEY_TTTLE)),
+            array_list.add(new DownloadData(res.getInt(res.getColumnIndex(KEY_FILE_ID)),
+                    res.getString(res.getColumnIndex(KEY_TTTLE)),
                     res.getString(res.getColumnIndex(KEY_LINK)),
                     res.getString(res.getColumnIndex(KEY_SIZE)),
+                    res.getString(res.getColumnIndex(KEY_PATH)),
                     res.getString(res.getColumnIndex(KEY_DAY)),
                     res.getString(res.getColumnIndex(KEY_MONTH)),
                     res.getString(res.getColumnIndex(KEY_YEAR))));
             res.moveToNext();
         }
+        Log.d(TAG, "Data successfully retrived from sqlite: " + array_list.size());
         return array_list;
     }
 
@@ -125,5 +134,20 @@ public class DownloadsDB extends SQLiteOpenHelper {
 
         Log.d(TAG, "Deleted all user info from sqlite");
     }
+    public void updatePath(String path, int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(KEY_PATH, path); //These Fields should be your String values of actual column names
+        db.update(TABLE_NOTICES, cv, "fileid=" + id, null);
 
+        Log.d(TAG, "path updated for:"+id );
+    }
+    public String getPath(int id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_NOTICES + " where fileid="+id, null);
+        Log.d(TAG, "returned updated path");
+        res.moveToFirst();
+        String path = res.getString(res.getColumnIndex(KEY_PATH));
+        return path;
+    }
 }
