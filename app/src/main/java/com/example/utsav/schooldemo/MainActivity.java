@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements
         session = new SessionManager(getApplicationContext());
         spinner.setOnItemSelectedListener(this);
         loadSpinner();
-
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,10 +91,11 @@ public class MainActivity extends AppCompatActivity implements
                         session.setLogin(!error, cidFinal);
 
                         //Launch main activity
-                        Intent intent = new Intent(MainActivity.this, NoticeAndStuff.class);
-                        startActivity(intent);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        Intent i=new Intent(getApplicationContext(), NoticeAndStuff.class);
+                        i.setFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         finish();
+                        startActivity(i);
+
                     } else {
                         // Error in login. Get the error message
                         String errorMsg = jObj.getString("error_msg");
@@ -169,9 +169,10 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    @Override
+    /*@Override
     public void onBackPressed()
     {
+       // moveTaskToBack(true);
         if(count == 1)
         {
             count=0;
@@ -184,5 +185,5 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         return;
-    }
+    }*/
 }

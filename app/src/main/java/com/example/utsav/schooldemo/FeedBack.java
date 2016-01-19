@@ -75,78 +75,87 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
             @Override
             public void onClick(View v) {
                 final String tag_string_req = "send feed back";
-                send.setText("Please wait..");
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        StringRequest strReq = new StringRequest(Request.Method.POST,
-                                AppConfig.URL_LIST, new Response.Listener<String>() {
+                if(subject.getText().toString().isEmpty() || message.getText().toString().isEmpty() || name.getText().toString().isEmpty())
+                {
+                    Toast.makeText(getApplicationContext(), "Please Fill all the Empty fields", Toast.LENGTH_LONG).show();
 
-                            @Override
-                            public void onResponse(String response) {
-                                Log.d(TAG, "Response: " + response.toString());
-                                //hideDialog();
+                }else {
+                    send.setText("Please wait..");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            StringRequest strReq = new StringRequest(Request.Method.POST,
+                                    AppConfig.URL_LIST, new Response.Listener<String>() {
 
-                                try {
-                                    JSONObject jObj = new JSONObject(response);
-                                    boolean error = jObj.getBoolean("error");
+                                @Override
+                                public void onResponse(String response) {
+                                    Log.d(TAG, "Response: " + response.toString());
+                                    //hideDialog();
 
-                                    // Check for error node in json
-                                    if (!error) {
-                                        String msg = jObj.getString("msg");
-                                        if(!msg.isEmpty()){
-                                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-                                            send.setText("Send");
+                                    try {
+                                        JSONObject jObj = new JSONObject(response);
+                                        boolean error = jObj.getBoolean("error");
+
+                                        // Check for error node in json
+                                        if (!error) {
+                                            String msg = jObj.getString("msg");
+                                            if (!msg.isEmpty()) {
+                                                subject.setText("");
+                                                message.setText("");
+                                                name.setText("");
+                                                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                                                send.setText("Send");
+                                            }
+
+                                        } else {
+                                            // Error in login. Get the error message
+                                            String errorMsg = jObj.getString("msg");
+                                            Toast.makeText(getApplicationContext(),
+                                                    errorMsg, Toast.LENGTH_LONG).show();
                                         }
-
-                                    } else {
-                                        // Error in login. Get the error message
-                                        String errorMsg = jObj.getString("msg");
-                                        Toast.makeText(getApplicationContext(),
-                                                errorMsg, Toast.LENGTH_LONG).show();
+                                    } catch (JSONException e) {
+                                        // JSON error
+                                        e.printStackTrace();
+                                        Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                     }
-                                } catch (JSONException e) {
-                                    // JSON error
-                                    e.printStackTrace();
-                                    Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+
+                                }
+                            }, new Response.ErrorListener() {
+
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.e(TAG, "Login Error: " + error.getMessage());
+                                    Toast.makeText(getApplicationContext(),
+                                            error.getMessage(), Toast.LENGTH_LONG).show();
+                                    // hideDialog();
+                                }
+                            }) {
+
+                                @Override
+                                protected Map<String, String> getParams() {
+                                    // Posting parameters to login url
+                                    Map<String, String> params = new HashMap<String, String>();
+                                    params.put("tag", "feedback");
+                                    String finalSubject = subject.getText().toString().trim().replaceAll(" ", "_");
+                                    params.put("title", finalSubject);
+                                    String finalMessage = message.getText().toString().trim().replaceAll(" ", "_");
+                                    params.put("msg", finalMessage);
+                                    String finalName = name.getText().toString().trim().replaceAll(" ", "_");
+                                    params.put("name", finalName);
+                                    params.put("cid", sessionManager.getCid());
+
+                                    return params;
                                 }
 
-                            }
-                        }, new Response.ErrorListener() {
+                            };
 
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.e(TAG, "Login Error: " + error.getMessage());
-                                Toast.makeText(getApplicationContext(),
-                                        error.getMessage(), Toast.LENGTH_LONG).show();
-                                // hideDialog();
-                            }
-                        }) {
+                            // Adding request to request queue
+                            AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
-                            @Override
-                            protected Map<String, String> getParams() {
-                                // Posting parameters to login url
-                                Map<String, String> params = new HashMap<String, String>();
-                                params.put("tag", "feedback");
-                                String finalSubject = subject.getText().toString().trim().replaceAll(" ", "_");
-                                params.put("title",finalSubject);
-                                String finalMessage = message.getText().toString().trim().replaceAll(" ", "_");
-                                params.put("msg",finalMessage );
-                                String finalName = name.getText().toString().trim().replaceAll(" ", "_");
-                                params.put("name", finalName);
-                                params.put("cid", sessionManager.getCid());
-
-                                return params;
-                            }
-
-                        };
-
-                        // Adding request to request queue
-                        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-
-                    }
-                }, 1);
+                        }
+                    }, 1);
+                }
             }
         });
 

@@ -28,7 +28,7 @@ public class SessionManager {
     private static final String KEY_CID = "cid";
     private static final String KEY_SUBS = "subscription";
     private static final String KEY_FETCH = "fetchData";
-
+    private static final String KEY_DOWNLOADS = "downloadFile";
     public SessionManager(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
@@ -50,11 +50,18 @@ public class SessionManager {
         editor.commit();
         Log.d(TAG, "Fetech data set to" + fetchData+"");
     }
-
+    public void setKeyDownloads(boolean downloads){ //false if file list exists
+        editor.putBoolean(KEY_DOWNLOADS, downloads);
+        editor.commit();
+        Log.d(TAG, "Key download set to "+ downloads);
+    }
     public boolean isLoggedIn(){
         return pref.getBoolean(KEY_IS_LOGGEDIN, false);
     }
     public String getCid(){ return pref.getString(KEY_CID, "NOT FOUND"); }
     public boolean getFetchData(){ return pref.getBoolean(KEY_FETCH, true); }
 
+    public boolean getKeyDownloads() {
+        return pref.getBoolean(KEY_DOWNLOADS, true);    //false if file list exists and no download required
+    }
 }

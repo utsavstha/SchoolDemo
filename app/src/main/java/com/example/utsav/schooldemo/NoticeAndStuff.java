@@ -63,7 +63,6 @@ public class NoticeAndStuff extends AppCompatActivity implements
     int count = 0;
     SessionManager session;
     private String cid;
-    private Handler progressBarbHandler = new Handler();
     CircularProgressView progressView;
     List<String> subsData = new ArrayList<>();
     @Override
@@ -134,12 +133,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
 
     private  void fetchDataAndAddToDb(final String cid) {
         final String tag_string_req = "fetch data";
-        swipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefreshLayout.setRefreshing(true);
-            }
-        });
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -172,12 +166,6 @@ public class NoticeAndStuff extends AppCompatActivity implements
                                     String year = noticeValue.getString("year");
                                     //add data to db
                                     db.addNotice(title, message, month, day, year);
-                                   /* progressBarbHandler.post(new Runnable() {
-                                        public void run() {
-                                            progressBar.setProgress(progressBarStatus);
-                                        }
-                                    });*/
-                                    //progressBar.setProgress(progressBarStatus);
                                     populateRecyclerView();
                                 }
 
@@ -296,6 +284,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
                 // Red item was selected
                 session.setLogin(false, "0");
                 db.deleteClients();
+                subsDB.deleteClients();
                 session.setKeyFetch(true);
                 startActivity(new Intent(NoticeAndStuff.this, SplashScreen.class));
                 finish();
@@ -308,9 +297,10 @@ public class NoticeAndStuff extends AppCompatActivity implements
                 return super.onOptionsItemSelected(item);
         }
     }
-    @Override
+   /* @Override
     public void onBackPressed()
     {
+        //moveTaskToBack(true);
         if(count == 1)
         {
             count=0;
@@ -323,10 +313,16 @@ public class NoticeAndStuff extends AppCompatActivity implements
         }
 
         return;
-    }
+    }*/
 
     @Override
     public void onRefresh() {
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
+            }
+        });
         fetchDataAndAddToDb(cid);
     }
 

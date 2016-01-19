@@ -31,7 +31,6 @@
         <activity
             android:name=".NoticeAndStuff"
             android:label="@string/title_activity_notice_and_stuff"
-            android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
@@ -52,6 +51,11 @@
         <activity
             android:name=".FeedBack"
             android:label="@string/title_activity_feed_back"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".DownloadFiles"
+            android:label="@string/title_activity_download_files"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>

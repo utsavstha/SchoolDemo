@@ -14,4 +14,5 @@
     <string name="title_activity_abouts">Abouts</string>
     <string name="title_activity_feed_back">FeedBack</string>
     <string name="send">Send</string>
+    <string name="title_activity_download_files">DownloadFiles</string>
 </resources>
