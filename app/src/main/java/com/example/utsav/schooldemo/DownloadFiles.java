@@ -377,7 +377,7 @@ public class DownloadFiles extends AppCompatActivity implements
             }
             filePath = directory.toString() +"/"+
                     dwnload_file_path.substring(dwnload_file_path.lastIndexOf("/") + 1);
-            //close the output stream when complete //
+            //close the output stream when complete
             fileOutput.close();
             runOnUiThread(new Runnable() {
                 public void run() {
