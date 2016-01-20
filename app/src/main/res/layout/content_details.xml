@@ -1,39 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_details" tools:context="com.example.utsav.schooldemo.Details">
-    <android.support.v7.widget.CardView
+    tools:context="com.example.utsav.schooldemo.Details"
+    tools:showIn="@layout/activity_details">
+
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <RelativeLayout
-            android:padding="30dp"
+        android:layout_height="wrap_content"
+        android:padding="30dp">
+
+        <TextView
+            android:id="@+id/title_details"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:text="Opening"
-                android:textSize="30dp"
-                android:id="@+id/title_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:layout_below="@+id/title_details"
-                android:text="28 Aug 2012"
-                android:id="@+id/date_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:layout_marginTop="30dp"
-                android:layout_below="@+id/date_details"
-                android:text="This is a dummy message"
-                android:id="@+id/message_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollHorizontally="true"/>
+            android:layout_height="wrap_content"
+            android:text="Opening"
+            android:textSize="30dp" />
 
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/date_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_details"
+            android:text="28 Aug 2012" />
 
-    </android.support.v7.widget.CardView>
+        <TextView
+            android:id="@+id/message_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/date_details"
+            android:layout_marginTop="30dp"
+            android:scrollHorizontally="true"
+            android:text="This is a dummy message" />
+
+    </RelativeLayout>
+
+
 </RelativeLayout>

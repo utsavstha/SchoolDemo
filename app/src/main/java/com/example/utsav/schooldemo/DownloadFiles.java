@@ -31,6 +31,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.utsav.schooldemo.Utils.DownloadsDB;
 import com.example.utsav.schooldemo.Utils.NoticeDB;
+import com.example.utsav.schooldemo.Utils.PathsDB;
 import com.example.utsav.schooldemo.Utils.RVAdapterDownloads;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
 import com.example.utsav.schooldemo.Utils.SubsDB;
@@ -66,6 +67,7 @@ public class DownloadFiles extends AppCompatActivity implements
     private DrawerLayout mDrawerLayout; //object that holds id to drawer layout
     private ActionBarDrawerToggle mDrawerToggle;
     String filePath;
+    PathsDB pathsDB;
     SessionManager sessionManager;
     SubsDB subsDB;
     NoticeDB db;
@@ -107,6 +109,7 @@ public class DownloadFiles extends AppCompatActivity implements
         db  = new NoticeDB(getApplicationContext());
         subsData = subsDB.getSubsList();
         downloadsDB = new DownloadsDB(getApplicationContext());
+        pathsDB = new PathsDB(getApplicationContext());
         if(sessionManager.getKeyDownloads()){
             fetchDataAndAddToDownloads(sessionManager.getCid());
             progressView.setVisibility(View.VISIBLE);
@@ -126,11 +129,11 @@ public class DownloadFiles extends AppCompatActivity implements
                     public void onItemClick(View view, final int position) {
                         final String url = listData.get(position).getLink();
                         final int _id = listData.get(position).getId();
-                        if(downloadsDB.getPath(_id).equalsIgnoreCase("xxx")){
+                        if(pathsDB.getPath(_id).equalsIgnoreCase("xxx")){
                             progress=new ProgressDialog(DownloadFiles.this);
                             progress.setMessage("Downloading: "+ listData.get(position).getTitle());
                             progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                            progress.setIndeterminate(true);
+                            progress.setIndeterminate(false);
                             progress.setProgress(0);
                             progress.show();
                             Log.d(TAG, "file download started");
@@ -142,7 +145,7 @@ public class DownloadFiles extends AppCompatActivity implements
                             }).start();
 
                         }else{
-                            File temp_file=new File(downloadsDB.getPath(_id));
+                            File temp_file=new File(pathsDB.getPath(_id));
                             Intent intent = new Intent();
                             intent.setAction(android.content.Intent.ACTION_VIEW);
                             intent.setDataAndType(Uri.fromFile(temp_file),getMimeType(temp_file.getAbsolutePath()));
@@ -194,6 +197,7 @@ public class DownloadFiles extends AppCompatActivity implements
                                     String month = noticeValue.getString("month");
                                     String year = noticeValue.getString("year");
                                     //add data to db
+                                    pathsDB.addPath(id,"xxx");
                                     downloadsDB.addDownloadList(id,title, link, size, "xxx",day, month, year);
                                     populateRecyclerView();
                                 }
@@ -353,12 +357,6 @@ public class DownloadFiles extends AppCompatActivity implements
             //this is the total size of the file which we are downloading
             totalSize = urlConnection.getContentLength();
 
-           /* runOnUiThread(new Runnable() {
-                public void run() {
-                   // progress.setMax(totalSize/1024);
-                }
-            });
-*/
             //create a buffer...
             byte[] buffer = new byte[1024];
             int bufferLength = 0;
@@ -371,7 +369,8 @@ public class DownloadFiles extends AppCompatActivity implements
                     public void run() {
                        // pb.setProgress(downloadedSize);
                         float per = ((float)downloadedSize/1024);
-                        //progress.setProgress((int) per);
+                        progress.setProgress((int) per);
+                       // progress.incrementProgressBy((int)per);
                     }
                 });
             }
@@ -382,7 +381,8 @@ public class DownloadFiles extends AppCompatActivity implements
             runOnUiThread(new Runnable() {
                 public void run() {
                     progress.hide();
-                    downloadsDB.updatePath(filePath, id);
+                    pathsDB.updatePath(filePath, id);
+                    populateRecyclerView(); //delete this in case of weird error
                     // pb.dismiss(); // if you want close it..
                 }
             });

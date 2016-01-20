@@ -134,20 +134,4 @@ public class DownloadsDB extends SQLiteOpenHelper {
 
         Log.d(TAG, "Deleted all user info from sqlite");
     }
-    public void updatePath(String path, int id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues cv = new ContentValues();
-        cv.put(KEY_PATH, path); //These Fields should be your String values of actual column names
-        db.update(TABLE_NOTICES, cv, "fileid=" + id, null);
-
-        Log.d(TAG, "path updated for:"+id );
-    }
-    public String getPath(int id){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NOTICES + " where fileid="+id, null);
-        Log.d(TAG, "returned updated path");
-        res.moveToFirst();
-        String path = res.getString(res.getColumnIndex(KEY_PATH));
-        return path;
-    }
 }

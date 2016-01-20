@@ -1,16 +1,22 @@
 package com.example.utsav.schooldemo.Utils;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.utsav.schooldemo.DownloadData;
 import com.example.utsav.schooldemo.NoticeData;
 import com.example.utsav.schooldemo.R;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -18,6 +24,7 @@ import java.util.List;
  */
 public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.DataViewHolder> {
     List<DownloadData> data;
+    PathsDB pathsDB;
     String months[] = {"Jan", "Feb", "Mar", "Apr",
             "May", "Jun", "Jul", "Aug", "Sep",
             "Oct", "Novr", "Dec"};
@@ -32,7 +39,7 @@ public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.
         TextView monthYear;
         TextView title;
         TextView size;
-
+        ImageView imageView;
         DataViewHolder(View itemView) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.cardView_downloads);
@@ -40,18 +47,22 @@ public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.
             monthYear = (TextView)itemView.findViewById(R.id.month_year_downloads);
             title = (TextView)itemView.findViewById(R.id.title_downloads);
             size = (TextView)itemView.findViewById(R.id.size_downloads);
+            imageView = (ImageView)itemView.findViewById(R.id.icon_download);
+
         }
     }
 
     @Override
     public RVAdapterDownloads.DataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.downloads_recyclerview, parent, false);
+        pathsDB = new PathsDB(parent.getContext());
         DataViewHolder pvh = new DataViewHolder(v);
         return pvh;
     }
 
     @Override
     public void onBindViewHolder(RVAdapterDownloads.DataViewHolder holder, int position) {
+
         holder.day.setText(data.get(position).getDay());
         //subtracting 1 to fix the array starting from 0 problem
         int month = Integer.parseInt(data.get(position).getMonth())-1;
@@ -61,6 +72,11 @@ public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.
         holder.monthYear.setText(mY);
         holder.title.setText(data.get(position).getTitle());
         holder.size.setText(data.get(position).getSize()+" kb");
+        if(pathsDB.getPath(data.get(position).getId()).equalsIgnoreCase("xxx")){
+            holder.imageView.setImageResource(R.drawable.savefile);
+        }else{
+            holder.imageView.setImageResource(R.drawable.eye106);
+        }
     }
 
     @Override

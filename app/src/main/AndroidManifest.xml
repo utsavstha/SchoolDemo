@@ -27,7 +27,8 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:noHistory="true"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
             android:name=".NoticeAndStuff"
@@ -52,11 +53,17 @@
         <activity
             android:name=".FeedBack"
             android:label="@string/title_activity_feed_back"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
             android:name=".DownloadFiles"
             android:label="@string/title_activity_download_files"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".News"
+            android:label="@string/title_activity_news"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>

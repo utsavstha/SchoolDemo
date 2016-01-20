@@ -2,17 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/news"
-        android:title="News"/>
+        android:title="News"
+        android:icon="@drawable/news2"/>
     <item
         android:id="@+id/notice_board"
-        android:title="Notice Board"/>
+        android:title="Notice Board"
+        android:icon="@drawable/notice"/>
     <item
         android:id="@+id/downloads"
-        android:title="Downloads"/>
+        android:title="Downloads"
+        android:icon="@drawable/download"/>
     <item
         android:id="@+id/abouts"
-        android:title="Abouts"/>
+        android:title="Abouts"
+        android:icon="@drawable/about"/>
     <item
         android:id="@+id/feed_back"
-        android:title="Feed Backs"/>
+        android:title="Feed Backs"
+        android:icon="@drawable/feedback"/>
 </menu>

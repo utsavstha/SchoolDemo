@@ -19,7 +19,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DataViewHolder> {
     List<NoticeData> data;
     String months[] = {"Jan", "Feb", "Mar", "Apr",
             "May", "Jun", "Jul", "Aug", "Sep",
-            "Oct", "Novr", "Dec"};
+            "Oct", "Nov", "Dec"};
 
     public RVAdapter(List<NoticeData> data) {
         this.data = data;
