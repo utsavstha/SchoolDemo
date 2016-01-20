@@ -54,7 +54,7 @@
             android:name=".FeedBack"
             android:label="@string/title_activity_feed_back"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize" >
+            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name=".DownloadFiles"

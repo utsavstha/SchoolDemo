@@ -25,6 +25,7 @@
         android:background="@drawable/button_color"
         android:layout_below="@+id/password"
         android:layout_width="match_parent"
+        android:textColor="@color/colorWhite"
         android:layout_height="wrap_content"
         android:text="@string/button_login_text"/>
 </RelativeLayout>

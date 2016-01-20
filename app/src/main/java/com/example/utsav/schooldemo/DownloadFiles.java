@@ -281,12 +281,12 @@ public class DownloadFiles extends AppCompatActivity implements
 
     @Override
     public void onRefresh() {
-        swipeRefreshLayout.post(new Runnable() {
+        /*swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
                 swipeRefreshLayout.setRefreshing(true);
             }
-        });
+        });*/
         fetchDataAndAddToDownloads(sessionManager.getCid());
     }
     @Override

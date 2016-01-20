@@ -49,8 +49,8 @@ import java.util.List;
 import java.util.Map;
 
 public class NoticeAndStuff extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener,
-        SwipeRefreshLayout.OnRefreshListener{
+        NavigationView.OnNavigationItemSelectedListener{
+
     public static String TAG = NoticeAndStuff.class.getSimpleName();
     private RecyclerView recyclerView;  //recycler view variable
     private List<NoticeData> listData = new ArrayList<>() ; //creating list of the Notice data class
@@ -65,17 +65,18 @@ public class NoticeAndStuff extends AppCompatActivity implements
     private String cid;
     CircularProgressView progressView;
     List<String> subsData = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notice_and_stuff);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mDrawer = (NavigationView) findViewById(R.id.main_drawer);//initialising navigation view
         mDrawer.setNavigationItemSelectedListener(this);           //tells this activity will handle click events
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_to_refresh);
         toolbar.showOverflowMenu();
-        swipeRefreshLayout.setOnRefreshListener(this);
         subsDB = new SubsDB(getApplicationContext());
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         recyclerView = (RecyclerView) findViewById(R.id.rv_list);
@@ -89,6 +90,13 @@ public class NoticeAndStuff extends AppCompatActivity implements
          /*linking drawer layout and drawer toggle
         drawer toggle keeps the track of who is active on the screen drawer or main content*/
         mDrawerToggle.syncState(); //Synchronizes the state of hamburger icon
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+               fetchDataAndAddToDb(cid);
+            }
+        });
 
         session = new SessionManager(getApplicationContext());
         cid = session.getCid();
@@ -316,17 +324,6 @@ public class NoticeAndStuff extends AppCompatActivity implements
 
         return;
     }*/
-
-    @Override
-    public void onRefresh() {
-        swipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                swipeRefreshLayout.setRefreshing(true);
-            }
-        });
-        fetchDataAndAddToDb(cid);
-    }
 
     public static interface ClickListener{
         public void onClick(View view, int position);

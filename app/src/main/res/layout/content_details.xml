@@ -2,42 +2,40 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.utsav.schooldemo.Details"
     tools:showIn="@layout/activity_details">
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="30dp">
-
-        <TextView
-            android:id="@+id/title_details"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Opening"
-            android:textSize="30dp" />
+            android:padding="30dp">
 
-        <TextView
-            android:id="@+id/date_details"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title_details"
-            android:text="28 Aug 2012" />
+            <TextView
+                android:id="@+id/title_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Opening"
+                android:textSize="30dp" />
 
-        <TextView
-            android:id="@+id/message_details"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/date_details"
-            android:layout_marginTop="30dp"
-            android:scrollHorizontally="true"
-            android:text="This is a dummy message" />
+            <TextView
+                android:id="@+id/date_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title_details"
+                android:text="28 Aug 2012" />
 
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/message_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/date_details"
+                android:layout_marginTop="30dp"
+                android:scrollHorizontally="true"
+                android:text="This is a dummy message" />
 
+        </RelativeLayout>
 
 </RelativeLayout>

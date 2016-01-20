@@ -24,11 +24,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <EditText
+                    android:layout_marginStart="5dp"
                     android:layout_below="@+id/name"
                     android:layout_marginTop="10dp"
                     android:id="@+id/message"
+                    android:background="@android:color/transparent"
                     android:height="200sp"
                     android:hint="Message"
+                    android:gravity="top"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <EditText
@@ -43,6 +46,7 @@
                     android:layout_marginTop="20dp"
                     android:layout_below="@+id/message"
                     android:text="@string/send"
+                    android:textColor="@color/colorWhite"
                     android:id="@+id/send"
                     android:background="@drawable/button_color"
                     android:layout_width="match_parent"
