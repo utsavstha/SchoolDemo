@@ -178,7 +178,7 @@ public class DownloadFiles extends AppCompatActivity implements
                         try {
                             JSONObject jObj = new JSONObject(response);
                             boolean error = jObj.getBoolean("error");
-
+                            Log.d(TAG,"Response: "+response);
                             // Check for error node in json
                             if (!error) {
                                 // data successfully fetched
@@ -297,6 +297,7 @@ public class DownloadFiles extends AppCompatActivity implements
                 sessionManager.setLogin(false, "0");
                 db.deleteClients();
                 subsDB.deleteClients();
+                downloadsDB.deleteRecords();
                 sessionManager.setKeyFetch(true);
                 startActivity(new Intent(DownloadFiles.this, SplashScreen.class));
                 finish();
@@ -317,14 +318,16 @@ public class DownloadFiles extends AppCompatActivity implements
         return super.onCreateOptionsMenu(menu);
     }
     private void populateRecyclerView() {
+        listData.clear();
         listData = downloadsDB.getDownloadList();
         progressView.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
+        Log.d(TAG,"list Data size: "+listData.size());
         //progressView.
         RVAdapterDownloads adapter = new RVAdapterDownloads(listData);
 
         recyclerView.setAdapter(adapter);
-        swipeRefreshLayout.setRefreshing(false);
+        //swipeRefreshLayout.setRefreshing(false);
     }
 
     void downloadFile(final String dwnload_file_path,final int id){

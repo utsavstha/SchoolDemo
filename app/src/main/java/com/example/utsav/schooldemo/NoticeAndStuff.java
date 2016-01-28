@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -28,8 +29,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.utsav.schooldemo.Utils.CustomPagerAdapter;
 import com.example.utsav.schooldemo.Utils.Demo;
+import com.example.utsav.schooldemo.Utils.ImageDB;
 import com.example.utsav.schooldemo.Utils.NoticeDB;
+import com.example.utsav.schooldemo.Utils.PathsDB;
 import com.example.utsav.schooldemo.Utils.RVAdapter;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
 import com.example.utsav.schooldemo.Utils.SQLiteHandler;
@@ -51,21 +55,32 @@ import java.util.Map;
 public class NoticeAndStuff extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener{
 
+
     public static String TAG = NoticeAndStuff.class.getSimpleName();
+    int[] mResources = {
+            R.drawable.a,
+            R.drawable.b,
+            R.drawable.c
+
+    };
+    private ViewPager viewPager;
     private RecyclerView recyclerView;  //recycler view variable
     private List<NoticeData> listData = new ArrayList<>() ; //creating list of the Notice data class
     private SwipeRefreshLayout swipeRefreshLayout;
     private NavigationView mDrawer;   //object to initialise navigation view
     private DrawerLayout mDrawerLayout; //object that holds id to drawer layout
     private ActionBarDrawerToggle mDrawerToggle;
+    List<String> imageList;
+    PathsDB pathsDB;
     NoticeDB db;
+    ImageDB imageDB;
     SubsDB subsDB;
     int count = 0;
     SessionManager session;
     private String cid;
     CircularProgressView progressView;
     List<String> subsData = new ArrayList<>();
-
+    CustomPagerAdapter customPagerAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,6 +96,9 @@ public class NoticeAndStuff extends AppCompatActivity implements
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         recyclerView = (RecyclerView) findViewById(R.id.rv_list);
         progressView = (CircularProgressView) findViewById(R.id.progress_view);
+        viewPager = (ViewPager)findViewById(R.id.pager_introduction);
+        imageList = new ArrayList<>();
+        imageDB = new ImageDB(getApplicationContext());
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
                 toolbar,
@@ -94,10 +112,10 @@ public class NoticeAndStuff extends AppCompatActivity implements
 
             @Override
             public void onRefresh() {
-               fetchDataAndAddToDb(cid);
+                fetchDataAndAddToDb(cid);
             }
         });
-
+        pathsDB = new PathsDB(getApplicationContext());
         session = new SessionManager(getApplicationContext());
         cid = session.getCid();
         db = new NoticeDB(getApplicationContext());
@@ -111,6 +129,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
             session.setKeyFetch(false);
         }else{
             populateRecyclerView();
+            populateImageViews();
         }
 
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext()); //this will make the recycler view work as list view
@@ -176,6 +195,15 @@ public class NoticeAndStuff extends AppCompatActivity implements
                                     db.addNotice(title, message, month, day, year);
                                     populateRecyclerView();
                                 }
+                                JSONArray images = jObj.getJSONArray("image");
+                                imageDB.deleteRecords();
+                                for(int j = 0; j < images.length(); j++){
+                                    String image = images.getString(j);
+                                    //imageList.add(image);
+                                    imageDB.addImageList(image);
+                                    populateImageViews();
+
+                                }
 
 
                             } else {
@@ -183,6 +211,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
                                 String errorMsg = jObj.getString("error_msg");
                                 //if(!session.getFetchData()){
                                     populateRecyclerView();
+                                    populateImageViews();
                                 //}
 
                                 Toast.makeText(getApplicationContext(),
@@ -240,6 +269,12 @@ public class NoticeAndStuff extends AppCompatActivity implements
 
     }
 
+    private void populateImageViews() {
+        imageList = imageDB.getDownloadList();
+        customPagerAdapter = new CustomPagerAdapter(this, imageList);
+        viewPager.setAdapter(customPagerAdapter);
+    }
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         Intent intent = null;
@@ -295,7 +330,9 @@ public class NoticeAndStuff extends AppCompatActivity implements
                 session.setLogin(false, "0");
                 db.deleteClients();
                 subsDB.deleteClients();
+                pathsDB.deleteRecords();
                 session.setKeyFetch(true);
+
                 startActivity(new Intent(NoticeAndStuff.this, SplashScreen.class));
                 finish();
                 return true;
@@ -307,6 +344,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
                 return super.onOptionsItemSelected(item);
         }
     }
+
    /* @Override
     public void onBackPressed()
     {
@@ -337,7 +375,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
         RVAdapter adapter = new RVAdapter(listData);
 
         recyclerView.setAdapter(adapter);
-        swipeRefreshLayout.setRefreshing(false);
+        //swipeRefreshLayout.setRefreshing(false);
     }
 
 }

@@ -25,11 +25,12 @@ import java.util.List;
 public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.DataViewHolder> {
     List<DownloadData> data;
     PathsDB pathsDB;
-    String months[] = {"Jan", "Feb", "Mar", "Apr",
+    String months[] = {"","Jan", "Feb", "Mar", "Apr",
             "May", "Jun", "Jul", "Aug", "Sep",
-            "Oct", "Novr", "Dec"};
+            "Oct", "Nov", "Dec"};
 
     public RVAdapterDownloads(List<DownloadData> data) {
+       // this.data.clear();
         this.data = data;
     }
 
@@ -56,22 +57,26 @@ public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.
     public RVAdapterDownloads.DataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.downloads_recyclerview, parent, false);
         pathsDB = new PathsDB(parent.getContext());
+
         DataViewHolder pvh = new DataViewHolder(v);
         return pvh;
     }
 
     @Override
     public void onBindViewHolder(RVAdapterDownloads.DataViewHolder holder, int position) {
-
+       // holder.day.setText("21321");
         holder.day.setText(data.get(position).getDay());
         //subtracting 1 to fix the array starting from 0 problem
-        int month = Integer.parseInt(data.get(position).getMonth())-1;
-        String mY =  months[month] +", "+ data.get(position).getYear();
+       // int month = Integer.parseInt();
+        String month = data.get(position).getMonth();
+        int value = Integer.parseInt(month);
+        Log.d("RVAdapter", value+"");
+        String mY =  months[value-26] +", "+ data.get(position).getYear();
         //String mY =  data.get(position).getMonth()+ ", "+ data.get(position).getYear();
 
         holder.monthYear.setText(mY);
         holder.title.setText(data.get(position).getTitle());
-        holder.size.setText(data.get(position).getSize()+" kb");
+        holder.size.setText(data.get(position).getSize());
         if(pathsDB.getPath(data.get(position).getId()).equalsIgnoreCase("xxx")){
             holder.imageView.setImageResource(R.drawable.savefile);
         }else{

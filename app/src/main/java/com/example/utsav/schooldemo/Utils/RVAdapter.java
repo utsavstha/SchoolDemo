@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.example.utsav.schooldemo.NoticeData;
 import com.example.utsav.schooldemo.R;
 
+import org.sufficientlysecure.htmltextview.HtmlTextView;
+
 import java.util.List;
 
 /**
@@ -30,7 +32,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DataViewHolder> {
         TextView day;
         TextView monthYear;
         TextView title;
-        TextView message;
+        HtmlTextView message;
 
         DataViewHolder(View itemView) {
             super(itemView);
@@ -38,7 +40,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DataViewHolder> {
             day = (TextView)itemView.findViewById(R.id.day_notice);
             monthYear = (TextView)itemView.findViewById(R.id.month_year_notice);
             title = (TextView)itemView.findViewById(R.id.title_notice);
-            message = (TextView)itemView.findViewById(R.id.message_notice);
+            message = (HtmlTextView )itemView.findViewById(R.id.message_notice);
         }
     }
 
@@ -60,6 +62,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DataViewHolder> {
         holder.monthYear.setText(mY);
         holder.title.setText(data.get(position).getTitle());
         holder.message.setText(data.get(position).getMessage());
+        holder.message.setHtmlFromString(data.get(position).getMessage(), new HtmlTextView.LocalImageGetter());
     }
 
     @Override

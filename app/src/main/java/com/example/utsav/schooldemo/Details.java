@@ -15,11 +15,13 @@ import android.view.View.OnTouchListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.sufficientlysecure.htmltextview.HtmlTextView;
+
 public class Details extends AppCompatActivity implements OnTouchListener {
 
     TextView title;
     TextView date;
-    TextView message;
+    HtmlTextView message;
     final static float STEP = 200;
     float mRatio = 1.0f;
     int mBaseDist;
@@ -45,14 +47,14 @@ public class Details extends AppCompatActivity implements OnTouchListener {
         fab = (FloatingActionButton) findViewById(R.id.fab_details);
         title = (TextView) findViewById(R.id.title_details);
         date = (TextView)findViewById(R.id.date_details);
-        message = (TextView) findViewById(R.id.message_details);
+        message = (HtmlTextView ) findViewById(R.id.message_details);
         title.setTypeface(null, Typeface.BOLD);
         title.setText(getIntent().getStringExtra("title"));
         date.setText(getIntent().getStringExtra("date"));
-        message.setText(getIntent().getStringExtra("message"));
+        message.setHtmlFromString(getIntent().getStringExtra("message"), new HtmlTextView.LocalImageGetter());
 
-        title.setTextSize(mRatio + titleSize);
-        date.setTextSize(mRatio + fontsize);
+        //title.setTextSize(mRatio + titleSize);
+        //date.setTextSize(mRatio + fontsize);
         message.setTextSize(mRatio + fontsize);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,8 +109,8 @@ public class Details extends AppCompatActivity implements OnTouchListener {
                 float delta = (getDistance(event) - mBaseDist) / STEP;
                 float multi = (float) Math.pow(2, delta);
                 mRatio = Math.min(1024.0f, Math.max(0.1f, mBaseRatio * multi));
-                title.setTextSize(mRatio + titleSize);
-                date.setTextSize(mRatio + fontsize);
+                //title.setTextSize(mRatio + titleSize);
+               // date.setTextSize(mRatio + fontsize);
                 message.setTextSize(mRatio + fontsize);
             }
         }

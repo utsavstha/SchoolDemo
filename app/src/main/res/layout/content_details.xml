@@ -8,34 +8,43 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.utsav.schooldemo.Details"
     tools:showIn="@layout/activity_details">
-        <RelativeLayout
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="30dp">
+
+        <TextView
+            android:id="@+id/title_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="30dp">
+            android:text="Opening"
+            android:textSize="30dp" />
 
-            <TextView
-                android:id="@+id/title_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Opening"
-                android:textSize="30dp" />
+        <TextView
+            android:id="@+id/date_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_details"
+            android:text="28 Aug 2012" />
 
-            <TextView
-                android:id="@+id/date_details"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/title_details"
-                android:text="28 Aug 2012" />
+        <ScrollView
+            android:layout_below="@+id/date_details"
+            android:id="@+id/SCROLLER_ID"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:fillViewport="true"
+            android:scrollbars="vertical">
 
-            <TextView
+            <org.sufficientlysecure.htmltextview.HtmlTextView
                 android:id="@+id/message_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/date_details"
+
                 android:layout_marginTop="30dp"
                 android:scrollHorizontally="true"
                 android:text="This is a dummy message" />
-
-        </RelativeLayout>
+        </ScrollView>
+    </RelativeLayout>
 
 </RelativeLayout>
