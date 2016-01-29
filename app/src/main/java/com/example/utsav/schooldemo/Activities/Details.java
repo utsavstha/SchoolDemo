@@ -1,11 +1,10 @@
-package com.example.utsav.schooldemo;
+package com.example.utsav.schooldemo.Activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,7 +12,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.utsav.schooldemo.R;
 
 import org.sufficientlysecure.htmltextview.HtmlTextView;
 
@@ -71,7 +71,7 @@ public class Details extends AppCompatActivity implements OnTouchListener {
                                         +"\n\nMessage: "+getIntent().getStringExtra("message")+
                                         "\n\nsource: SchoolDemo";
                                 intent.putExtra(Intent.EXTRA_TEXT,shareText );
-                                startActivity(Intent.createChooser(intent, "Dialog title text"));
+                                startActivity(Intent.createChooser(intent, "Share With"));
                             }
                         })
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -90,7 +90,7 @@ public class Details extends AppCompatActivity implements OnTouchListener {
     @Override
     public void onBackPressed()
     {
-       startActivity(new Intent(Details.this, NoticeAndStuff.class));
+        startActivity(new Intent(Details.this, NoticeAndStuff.class));
         finish();
     }
 

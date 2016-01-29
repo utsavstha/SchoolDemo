@@ -5,8 +5,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.example.utsav.schooldemo.NoticeAndStuff.ClickListener;
-
 /**
  * Created by utsav on 1/2/2016.
  */

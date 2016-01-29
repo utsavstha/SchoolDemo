@@ -1,4 +1,4 @@
-package com.example.utsav.schooldemo;
+package com.example.utsav.schooldemo.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +15,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.utsav.schooldemo.Utils.SQLiteHandler;
+import com.example.utsav.schooldemo.R;
+import com.example.utsav.schooldemo.DBClasses.SQLiteHandler;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;
@@ -48,8 +49,9 @@ public class SplashScreen extends AppCompatActivity {
         session = new SessionManager(getApplicationContext());
         if(session.isLoggedIn()){
             Intent intent = new Intent(SplashScreen.this, NoticeAndStuff.class);
+            finishAffinity();
             startActivity(intent);
-            finish();
+            //finish();
         }
         db = new SQLiteHandler(getApplicationContext());
         try {
@@ -105,9 +107,9 @@ public class SplashScreen extends AppCompatActivity {
                                             if (i >= length-1) {
                                                 mElasticDownloadView.success();
                                                 Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                                                startActivity(intent);
                                                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                                                finish();
+                                                finishAffinity();
+                                                startActivity(intent);
                                             }
 
                                         }

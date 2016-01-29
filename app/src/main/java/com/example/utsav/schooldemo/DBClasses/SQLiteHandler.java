@@ -1,4 +1,4 @@
-package com.example.utsav.schooldemo.Utils;
+package com.example.utsav.schooldemo.DBClasses;
 
 /**
  * Created by utsav on 1/2/2016.
@@ -11,7 +11,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class SQLiteHandler extends SQLiteOpenHelper {

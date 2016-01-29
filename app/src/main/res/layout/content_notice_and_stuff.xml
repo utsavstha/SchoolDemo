@@ -6,52 +6,36 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_notice_and_stuff"
     android:background="@color/colorWhite"
-    tools:context="com.example.utsav.schooldemo.NoticeAndStuff">
-    <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
+    tools:context="com.example.utsav.schooldemo.Activities.NoticeAndStuff">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_to_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v4.widget.SwipeRefreshLayout
-
-            android:id="@+id/swipe_to_refresh"
+        <FrameLayout
+            android:id="@+id/main_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
 
-            <FrameLayout
-                android:layout_marginTop="10dp"
-                android:id="@+id/main_content"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-                <com.github.rahatarmanahmed.cpv.CircularProgressView
-                    android:layout_marginTop="20dp"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:layout_gravity="center"
-                    android:id="@+id/progress_view"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:visibility="gone"
-                    app:cpv_indeterminate="true" />
-            </FrameLayout>
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-        <android.support.design.widget.NavigationView
-            android:id="@+id/main_drawer"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            app:itemIconTint="@color/colorAccent"
-            app:itemTextColor="@color/colorPrimaryText"
-            app:menu="@menu/menu_drawer" />
-    </android.support.v4.widget.DrawerLayout>
-
+            <com.github.rahatarmanahmed.cpv.CircularProgressView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/progress_view"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:visibility="gone"
+                app:cpv_indeterminate="true" />
+        </FrameLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

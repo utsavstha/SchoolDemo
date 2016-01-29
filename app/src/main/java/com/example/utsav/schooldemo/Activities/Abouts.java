@@ -1,4 +1,4 @@
-package com.example.utsav.schooldemo;
+package com.example.utsav.schooldemo.Activities;
 
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -19,9 +19,14 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.utsav.schooldemo.Utils.NoticeDB;
+import com.example.utsav.schooldemo.R;
+import com.example.utsav.schooldemo.DBClasses.DownloadsDB;
+import com.example.utsav.schooldemo.DBClasses.NoticeDB;
+import com.example.utsav.schooldemo.DBClasses.PathsDB;
+import com.example.utsav.schooldemo.DBClasses.SubsDB;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
+import com.example.utsav.schooldemo.app.Logout;
 import com.example.utsav.schooldemo.app.SessionManager;
 
 import org.json.JSONArray;
@@ -38,6 +43,9 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
     private ActionBarDrawerToggle mDrawerToggle;
     TextView name,email, contact, about, website;
     NoticeDB db;
+    PathsDB pathsDB;
+    SubsDB subsDB;
+    DownloadsDB downloadsDB;
     int count = 0;
     SessionManager sessionManager;
     @Override
@@ -50,6 +58,9 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         mDrawer.setNavigationItemSelectedListener(this);           //tells this activity will handle click events
         toolbar.showOverflowMenu();
         db = new NoticeDB(getApplicationContext());
+        pathsDB = new PathsDB(getApplicationContext());
+        subsDB = new SubsDB(getApplicationContext());
+        downloadsDB = new DownloadsDB(getApplicationContext());
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_abouts);
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
@@ -161,7 +172,7 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
 
     }
 
-    @Override
+    /*@Override
     public void onBackPressed()
     {
         if(count == 1)
@@ -176,7 +187,7 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         }
 
         return;
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -190,9 +201,7 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         switch (item.getItemId()) {
             case R.id.action_logout:
                 // Red item was selected
-                sessionManager.setLogin(false, "0");
-                db.deleteClients();
-                sessionManager.setKeyFetch(true);
+                Logout logout = new Logout(getApplicationContext());
                 startActivity(new Intent(Abouts.this, SplashScreen.class));
                 finish();
                 return true;
@@ -214,6 +223,12 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
             startActivity(new Intent(Abouts.this, NoticeAndStuff.class));
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(Abouts.this, FeedBack.class));
+        }else if(item.getItemId() == R.id.downloads){
+            startActivity(new Intent(Abouts.this, DownloadFiles.class));
+        }else if(item.getItemId() == R.id.contacts){
+            startActivity(new Intent(Abouts.this, Contacts.class));
+        }else if(item.getItemId() == R.id.resources) {
+            startActivity(new Intent(Abouts.this, Resources.class));
         }
         return true;
     }

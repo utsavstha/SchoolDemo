@@ -11,22 +11,22 @@ import android.widget.TextView;
 
 import com.example.utsav.schooldemo.DBClasses.PathsDB;
 import com.example.utsav.schooldemo.DataClasses.DownloadData;
+import com.example.utsav.schooldemo.DataClasses.ResourcesData;
 import com.example.utsav.schooldemo.R;
 
 import java.util.List;
 
 /**
- * Created by utsav on 1/19/2016.
+ * Created by utsav on 1/28/2016.
  */
-public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.DataViewHolder> {
-    List<DownloadData> data;
-    PathsDB pathsDB;
+public class RVAdapterResources extends RecyclerView.Adapter<RVAdapterResources.DataViewHolder> {
+    List<ResourcesData> data;
     String months[] = {"","Jan", "Feb", "Mar", "Apr",
             "May", "Jun", "Jul", "Aug", "Sep",
             "Oct", "Nov", "Dec"};
 
-    public RVAdapterDownloads(List<DownloadData> data) {
-       // this.data.clear();
+    public RVAdapterResources(List<ResourcesData> data) {
+        // this.data.clear();
         this.data = data;
     }
 
@@ -35,49 +35,40 @@ public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.
         TextView day;
         TextView monthYear;
         TextView title;
-        TextView size;
-        ImageView imageView;
+
         DataViewHolder(View itemView) {
             super(itemView);
-            cv = (CardView) itemView.findViewById(R.id.cardView_downloads);
-            day = (TextView)itemView.findViewById(R.id.day_downloads);
-            monthYear = (TextView)itemView.findViewById(R.id.month_year_downloads);
-            title = (TextView)itemView.findViewById(R.id.title_downloads);
-            size = (TextView)itemView.findViewById(R.id.size_downloads);
-            imageView = (ImageView)itemView.findViewById(R.id.icon_download);
+            cv = (CardView) itemView.findViewById(R.id.cardView_resources);
+            day = (TextView)itemView.findViewById(R.id.day_resources);
+            monthYear = (TextView)itemView.findViewById(R.id.month_year_resources);
+            title = (TextView)itemView.findViewById(R.id.title_resources);
 
         }
     }
 
     @Override
-    public RVAdapterDownloads.DataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.downloads_recyclerview, parent, false);
-        pathsDB = new PathsDB(parent.getContext());
+    public RVAdapterResources.DataViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_resources, parent, false);
 
         DataViewHolder pvh = new DataViewHolder(v);
         return pvh;
     }
 
     @Override
-    public void onBindViewHolder(RVAdapterDownloads.DataViewHolder holder, int position) {
-       // holder.day.setText("21321");
+    public void onBindViewHolder(RVAdapterResources.DataViewHolder holder, int position) {
+        // holder.day.setText("21321");
         holder.day.setText(data.get(position).getDay());
         //subtracting 1 to fix the array starting from 0 problem
-       // int month = Integer.parseInt();
+        // int month = Integer.parseInt();
         String month = data.get(position).getMonth();
         int value = Integer.parseInt(month);
-        Log.d("RVAdapter", value+"");
-        String mY =  months[value-26] +", "+ data.get(position).getYear();
+        Log.d("RVAdapter", value + "");
+        String mY =  months[value] +", "+ data.get(position).getYear();
         //String mY =  data.get(position).getMonth()+ ", "+ data.get(position).getYear();
 
         holder.monthYear.setText(mY);
         holder.title.setText(data.get(position).getTitle());
-        holder.size.setText(data.get(position).getSize());
-        if(pathsDB.getPath(data.get(position).getId()).equalsIgnoreCase("xxx")){
-            holder.imageView.setImageResource(R.drawable.savefile);
-        }else{
-            holder.imageView.setImageResource(R.drawable.eye106);
-        }
+
     }
 
     @Override

@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+
     <application
         android:name=".app.AppController"
         android:allowBackup="true"
@@ -13,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".SplashScreen"
+            android:name=".Activities.SplashScreen"
             android:label="@string/app_name"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar" >
@@ -24,46 +25,56 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:label="@string/title_activity_main"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" >
         </activity>
         <activity
-            android:name=".NoticeAndStuff"
+            android:name=".Activities.NoticeAndStuff"
             android:label="@string/title_activity_notice_and_stuff"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
-            android:name=".Subscriptions"
+            android:name=".Activities.Subscriptions"
             android:label="@string/title_activity_subscriptions"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
-            android:name=".Details"
+            android:name=".Activities.Details"
             android:label="@string/title_activity_details"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
-            android:name=".Abouts"
+            android:name=".Activities.Abouts"
             android:label="@string/title_activity_abouts"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
-            android:name=".FeedBack"
+            android:name=".Activities.FeedBack"
             android:label="@string/title_activity_feed_back"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
-            android:name=".DownloadFiles"
+            android:name=".Activities.DownloadFiles"
             android:label="@string/title_activity_download_files"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
         <activity
-            android:name=".News"
+            android:name=".Activities.News"
             android:label="@string/title_activity_news"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".Activities.Contacts"
+            android:label="@string/title_activity_contacts"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity
+            android:name=".Activities.Resources"
+            android:label="@string/title_activity_resources"
             android:theme="@style/AppTheme.NoActionBar" >
         </activity>
     </application>

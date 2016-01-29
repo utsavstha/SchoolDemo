@@ -1,11 +1,9 @@
-package com.example.utsav.schooldemo;
+package com.example.utsav.schooldemo.Activities;
 
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -29,17 +27,18 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.utsav.schooldemo.DataClasses.NoticeData;
+import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.CustomPagerAdapter;
-import com.example.utsav.schooldemo.Utils.Demo;
-import com.example.utsav.schooldemo.Utils.ImageDB;
-import com.example.utsav.schooldemo.Utils.NoticeDB;
-import com.example.utsav.schooldemo.Utils.PathsDB;
+import com.example.utsav.schooldemo.DBClasses.ImageDB;
+import com.example.utsav.schooldemo.DBClasses.NoticeDB;
+import com.example.utsav.schooldemo.DBClasses.PathsDB;
 import com.example.utsav.schooldemo.Utils.RVAdapter;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
-import com.example.utsav.schooldemo.Utils.SQLiteHandler;
-import com.example.utsav.schooldemo.Utils.SubsDB;
+import com.example.utsav.schooldemo.DBClasses.SubsDB;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
+import com.example.utsav.schooldemo.app.Logout;
 import com.example.utsav.schooldemo.app.SessionManager;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
@@ -75,7 +74,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
     NoticeDB db;
     ImageDB imageDB;
     SubsDB subsDB;
-    int count = 0;
+    private int count = 0;
     SessionManager session;
     private String cid;
     CircularProgressView progressView;
@@ -121,6 +120,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
         db = new NoticeDB(getApplicationContext());
         subsData = subsDB.getSubsList();
         progressView.setColor(Color.parseColor("#D32F2F"));
+
         if(session.getFetchData()){
             fetchDataAndAddToDb(cid);
             progressView.setVisibility(View.VISIBLE);
@@ -193,8 +193,9 @@ public class NoticeAndStuff extends AppCompatActivity implements
                                     String year = noticeValue.getString("year");
                                     //add data to db
                                     db.addNotice(title, message, month, day, year);
-                                    populateRecyclerView();
+
                                 }
+                                populateRecyclerView();
                                 JSONArray images = jObj.getJSONArray("image");
                                 imageDB.deleteRecords();
                                 for(int j = 0; j < images.length(); j++){
@@ -263,10 +264,6 @@ public class NoticeAndStuff extends AppCompatActivity implements
             }
         }, 1);
 
-        if(swipeRefreshLayout.isRefreshing()){
-            swipeRefreshLayout.setRefreshing(false);
-        }
-
     }
 
     private void populateImageViews() {
@@ -286,8 +283,11 @@ public class NoticeAndStuff extends AppCompatActivity implements
             startActivity(new Intent(NoticeAndStuff.this, FeedBack.class));
         }else if (item.getItemId() == R.id.downloads){
             startActivity(new Intent(NoticeAndStuff.this, DownloadFiles.class));
+        }else if(item.getItemId() == R.id.contacts){
+            startActivity(new Intent(NoticeAndStuff.this, Contacts.class));
+        }else if(item.getItemId() == R.id.resources) {
+            startActivity(new Intent(NoticeAndStuff.this, Resources.class));
         }
-
         return true;
     }
 
@@ -327,11 +327,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
         switch (item.getItemId()) {
             case R.id.action_logout:
                 // Red item was selected
-                session.setLogin(false, "0");
-                db.deleteClients();
-                subsDB.deleteClients();
-                pathsDB.deleteRecords();
-                session.setKeyFetch(true);
+                Logout logout = new Logout(getApplicationContext());
 
                 startActivity(new Intent(NoticeAndStuff.this, SplashScreen.class));
                 finish();
@@ -345,10 +341,10 @@ public class NoticeAndStuff extends AppCompatActivity implements
         }
     }
 
-   /* @Override
+    @Override
     public void onBackPressed()
     {
-        //moveTaskToBack(true);
+        // moveTaskToBack(true);
         if(count == 1)
         {
             count=0;
@@ -361,7 +357,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
         }
 
         return;
-    }*/
+    }
 
     public static interface ClickListener{
         public void onClick(View view, int position);
@@ -376,6 +372,9 @@ public class NoticeAndStuff extends AppCompatActivity implements
 
         recyclerView.setAdapter(adapter);
         //swipeRefreshLayout.setRefreshing(false);
+        if(swipeRefreshLayout.isRefreshing()){
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
 }

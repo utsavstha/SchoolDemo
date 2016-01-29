@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
     android:layout_height="match_parent" android:padding="20dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_main" tools:context="com.example.utsav.schooldemo.MainActivity">
+    tools:showIn="@layout/activity_main" tools:context="com.example.utsav.schooldemo.Activities.MainActivity">
     <Spinner
         android:layout_marginTop="50dp"
         android:id="@+id/client_list"

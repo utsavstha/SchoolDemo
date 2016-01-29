@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.utsav.schooldemo.NoticeData;
+import com.example.utsav.schooldemo.DataClasses.NoticeData;
 import com.example.utsav.schooldemo.R;
 
 import org.sufficientlysecure.htmltextview.HtmlTextView;

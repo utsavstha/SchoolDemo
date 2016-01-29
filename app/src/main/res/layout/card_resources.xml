@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:padding="5dp"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <android.support.v7.widget.CardView
-        android:id="@+id/cardView"
+        android:id="@+id/cardView_resources"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -23,7 +20,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/day_notice"
+                    android:id="@+id/day_resources"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="7"
@@ -31,7 +28,7 @@
                     android:textSize="25dp" />
 
                 <TextView
-                    android:id="@+id/month_year_notice"
+                    android:id="@+id/month_year_resources"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Nov, 15"
@@ -46,24 +43,14 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/title_notice"
+                    android:id="@+id/title_resources"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Openging"
                     android:textSize="20dp" />
 
-                <org.sufficientlysecure.htmltextview.HtmlTextView
-                    android:id="@+id/message_notice"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:scrollHorizontally="true"
-                    android:ellipsize="end"
-                    android:text="Reopening soon"
-                    android:textSize="13dp"  />
             </LinearLayout>
         </LinearLayout>
-
 
 
     </android.support.v7.widget.CardView>

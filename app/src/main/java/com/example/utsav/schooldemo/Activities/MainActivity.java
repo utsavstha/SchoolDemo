@@ -1,12 +1,9 @@
-package com.example.utsav.schooldemo;
+package com.example.utsav.schooldemo.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,7 +17,8 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.utsav.schooldemo.Utils.SQLiteHandler;
+import com.example.utsav.schooldemo.R;
+import com.example.utsav.schooldemo.DBClasses.SQLiteHandler;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;
@@ -93,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements
                         //Launch main activity
                         Intent i=new Intent(getApplicationContext(), NoticeAndStuff.class);
                         i.setFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        finish();
+                        finishAffinity();
                         startActivity(i);
 
                     } else {
@@ -169,14 +167,14 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    /*@Override
+    @Override
     public void onBackPressed()
     {
        // moveTaskToBack(true);
         if(count == 1)
         {
             count=0;
-            finish();
+            finishAffinity();
         }
         else
         {
@@ -185,5 +183,5 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         return;
-    }*/
+    }
 }

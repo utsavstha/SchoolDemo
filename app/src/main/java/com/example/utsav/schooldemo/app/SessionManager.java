@@ -26,7 +26,7 @@ public class SessionManager {
 
     private static final String KEY_IS_LOGGEDIN = "isLoggedIn";
     private static final String KEY_CID = "cid";
-    private static final String KEY_SUBS = "subscription";
+    private static final String KEY_CONTACTS = "contacts";
     private static final String KEY_FETCH = "fetchData";
     private static final String KEY_DOWNLOADS = "downloadFile";
     public SessionManager(Context context) {
@@ -55,6 +55,11 @@ public class SessionManager {
         editor.commit();
         Log.d(TAG, "Key download set to "+ downloads);
     }
+    public void setKeyContacts(boolean contacts){   //false if data already exists
+        editor.putBoolean(KEY_CONTACTS, contacts);
+        editor.commit();
+        Log.d(TAG, "Key contacts set to " + contacts);
+    }
     public boolean isLoggedIn(){
         return pref.getBoolean(KEY_IS_LOGGEDIN, false);
     }
@@ -63,5 +68,9 @@ public class SessionManager {
 
     public boolean getKeyDownloads() {
         return pref.getBoolean(KEY_DOWNLOADS, true);    //false if file list exists and no download required
+    }
+
+    public boolean getKeyContacts(){
+        return pref.getBoolean(KEY_CONTACTS, true);     //false if file list exists and no download required
     }
 }

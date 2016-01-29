@@ -1,10 +1,9 @@
-package com.example.utsav.schooldemo;
+package com.example.utsav.schooldemo.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,8 +18,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.Demo;
-import com.example.utsav.schooldemo.Utils.SubsDB;
+import com.example.utsav.schooldemo.DBClasses.SubsDB;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;

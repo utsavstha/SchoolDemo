@@ -1,11 +1,9 @@
-package com.example.utsav.schooldemo;
+package com.example.utsav.schooldemo.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,12 +20,16 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.utsav.schooldemo.Utils.NoticeDB;
+import com.example.utsav.schooldemo.R;
+import com.example.utsav.schooldemo.DBClasses.DownloadsDB;
+import com.example.utsav.schooldemo.DBClasses.NoticeDB;
+import com.example.utsav.schooldemo.DBClasses.PathsDB;
+import com.example.utsav.schooldemo.DBClasses.SubsDB;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
+import com.example.utsav.schooldemo.app.Logout;
 import com.example.utsav.schooldemo.app.SessionManager;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,6 +44,9 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
     TextView subject, message,name;
     SessionManager sessionManager;
     NoticeDB db;
+    SubsDB subsDB;
+    PathsDB pathsDB;
+    DownloadsDB downloadsDB;
     Button send;
     int count = 0;
     @Override
@@ -170,11 +175,17 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
             startActivity(new Intent(FeedBack.this, NoticeAndStuff.class));
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(FeedBack.this, Abouts.class));
+        }else if(item.getItemId() == R.id.downloads){
+            startActivity(new Intent(FeedBack.this, DownloadFiles.class));
+        }else if(item.getItemId() == R.id.contacts){
+            startActivity(new Intent(FeedBack.this, Contacts.class));
+        }else if(item.getItemId() == R.id.resources) {
+            startActivity(new Intent(FeedBack.this, Resources.class));
         }
         return true;
     }
 
-    @Override
+   /* @Override
     public void onBackPressed()
     {
         if(count == 1)
@@ -189,7 +200,7 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
         }
 
         return;
-    }
+    }*/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -201,9 +212,7 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
         switch (item.getItemId()) {
             case R.id.action_logout:
                 // Red item was selected
-                sessionManager.setLogin(false, "0");
-                sessionManager.setKeyFetch(true);
-                db.deleteClients();
+                Logout logout = new Logout(getApplicationContext());
                 startActivity(new Intent(FeedBack.this, SplashScreen.class));
                 finish();
                 return true;

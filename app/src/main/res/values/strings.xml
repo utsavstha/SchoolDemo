@@ -16,4 +16,6 @@
     <string name="send">Send</string>
     <string name="title_activity_download_files">DownloadFiles</string>
     <string name="title_activity_news">News</string>
+    <string name="title_activity_contacts">Contacts</string>
+    <string name="title_activity_resources">Resources</string>
 </resources>

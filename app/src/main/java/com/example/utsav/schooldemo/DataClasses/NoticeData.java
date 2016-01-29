@@ -1,4 +1,4 @@
-package com.example.utsav.schooldemo;
+package com.example.utsav.schooldemo.DataClasses;
 
 /**
  * Created by utsav on 1/2/2016.

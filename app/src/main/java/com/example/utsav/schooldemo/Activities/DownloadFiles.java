@@ -1,7 +1,6 @@
-package com.example.utsav.schooldemo;
+package com.example.utsav.schooldemo.Activities;
 
 import android.app.Dialog;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -29,14 +28,17 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.utsav.schooldemo.Utils.DownloadsDB;
-import com.example.utsav.schooldemo.Utils.NoticeDB;
-import com.example.utsav.schooldemo.Utils.PathsDB;
+import com.example.utsav.schooldemo.DataClasses.DownloadData;
+import com.example.utsav.schooldemo.R;
+import com.example.utsav.schooldemo.DBClasses.DownloadsDB;
+import com.example.utsav.schooldemo.DBClasses.NoticeDB;
+import com.example.utsav.schooldemo.DBClasses.PathsDB;
 import com.example.utsav.schooldemo.Utils.RVAdapterDownloads;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
-import com.example.utsav.schooldemo.Utils.SubsDB;
+import com.example.utsav.schooldemo.DBClasses.SubsDB;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
+import com.example.utsav.schooldemo.app.Logout;
 import com.example.utsav.schooldemo.app.SessionManager;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
@@ -71,6 +73,7 @@ public class DownloadFiles extends AppCompatActivity implements
     SessionManager sessionManager;
     SubsDB subsDB;
     NoticeDB db;
+    int count = 0;
     ProgressBar pb;
     Dialog dialog;
     int downloadedSize = 0;
@@ -197,11 +200,11 @@ public class DownloadFiles extends AppCompatActivity implements
                                     String month = noticeValue.getString("month");
                                     String year = noticeValue.getString("year");
                                     //add data to db
-                                    pathsDB.addPath(id,"xxx");
-                                    downloadsDB.addDownloadList(id,title, link, size, "xxx",day, month, year);
-                                    populateRecyclerView();
-                                }
+                                    pathsDB.addPath(id, "xxx");
+                                    downloadsDB.addDownloadList(id, title, link, size, "xxx", day, month, year);
 
+                                }
+                                populateRecyclerView();
 
                             } else {
                                 // Error in login. Get the error message
@@ -274,6 +277,10 @@ public class DownloadFiles extends AppCompatActivity implements
             startActivity(new Intent(DownloadFiles.this, FeedBack.class));
         }else if(item.getItemId() == R.id.notice_board){
             startActivity(new Intent(DownloadFiles.this, NoticeAndStuff.class));
+        }else if(item.getItemId() == R.id.contacts){
+            startActivity(new Intent(DownloadFiles.this, Contacts.class));
+        }else if(item.getItemId() == R.id.resources) {
+            startActivity(new Intent(DownloadFiles.this, Resources.class));
         }
 
         return true;
@@ -294,11 +301,7 @@ public class DownloadFiles extends AppCompatActivity implements
         switch (item.getItemId()) {
             case R.id.action_logout:
                 // Red item was selected
-                sessionManager.setLogin(false, "0");
-                db.deleteClients();
-                subsDB.deleteClients();
-                downloadsDB.deleteRecords();
-                sessionManager.setKeyFetch(true);
+                Logout logout = new Logout(getApplicationContext());
                 startActivity(new Intent(DownloadFiles.this, SplashScreen.class));
                 finish();
                 return true;
@@ -328,6 +331,9 @@ public class DownloadFiles extends AppCompatActivity implements
 
         recyclerView.setAdapter(adapter);
         //swipeRefreshLayout.setRefreshing(false);
+        if(swipeRefreshLayout.isRefreshing()){
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     void downloadFile(final String dwnload_file_path,final int id){
@@ -420,6 +426,22 @@ public class DownloadFiles extends AppCompatActivity implements
         }
         return type;
     }
+    /*@Override
+    public void onBackPressed()
+    {
+        // moveTaskToBack(true);
+        if(count == 1)
+        {
+            count=0;
+            finish();
+        }
+        else
+        {
+            Toast.makeText(getApplicationContext(), "Press Back again to quit.", Toast.LENGTH_SHORT).show();
+            count++;
+        }
 
+        return;
+    }*/
 
 }
