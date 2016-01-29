@@ -63,7 +63,13 @@ public class RVAdapterResources extends RecyclerView.Adapter<RVAdapterResources.
         String month = data.get(position).getMonth();
         int value = Integer.parseInt(month);
         Log.d("RVAdapter", value + "");
-        String mY =  months[value] +", "+ data.get(position).getYear();
+        String yr = data.get(position).getYear();
+        String year;
+        if (yr != null && yr.length() >= 2) {
+            year = yr.substring(yr.length() - 2);
+        }else
+            year = yr;
+        String mY =  months[value] +", "+ year;
         //String mY =  data.get(position).getMonth()+ ", "+ data.get(position).getYear();
 
         holder.monthYear.setText(mY);

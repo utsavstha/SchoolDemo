@@ -56,7 +56,13 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.DataViewHolder> {
         holder.day.setText(data.get(position).getDay());
         //subtracting 1 to fix the array starting from 0 problem
         int month = Integer.parseInt(data.get(position).getMonth())-1;
-        String mY =  months[month] +", "+ data.get(position).getYear();
+        String yr = data.get(position).getYear();
+        String year;
+        if (yr != null && yr.length() >= 2) {
+            year = yr.substring(yr.length() - 2);
+        }else
+            year = yr;
+        String mY =  months[month] +", "+ year;
         //String mY =  data.get(position).getMonth()+ ", "+ data.get(position).getYear();
 
         holder.monthYear.setText(mY);

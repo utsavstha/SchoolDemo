@@ -28,6 +28,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.davidpacioianu.inkpageindicator.InkPageIndicator;
 import com.example.utsav.schooldemo.DataClasses.NoticeData;
 import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.CustomPagerAdapter;
@@ -274,6 +275,8 @@ public class NoticeAndStuff extends AppCompatActivity implements
         imageList = imageDB.getDownloadList();
         customPagerAdapter = new CustomPagerAdapter(this, imageList);
         viewPager.setAdapter(customPagerAdapter);
+        InkPageIndicator inkPageIndicator = (InkPageIndicator) findViewById(R.id.indicator);
+        inkPageIndicator.setViewPager(viewPager);
     }
 
     @Override

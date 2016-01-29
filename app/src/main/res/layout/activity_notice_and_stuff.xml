@@ -34,7 +34,16 @@
                     android:fitsSystemWindows="true"
                     app:layout_collapseMode="parallax"
                     tools:listitem="@layout/pager_item" />
-
+                <com.davidpacioianu.inkpageindicator.InkPageIndicator
+                    android:id="@+id/indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:dotDiameter="8dp"
+                    app:dotGap="8dp"
+                    android:layout_marginTop="10dp"
+                    app:animationDuration="320"
+                    app:pageIndicatorColor="@color/colorWhite"
+                    app:currentPageIndicatorColor="@color/colorAccent"/>
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
