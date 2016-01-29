@@ -2,6 +2,8 @@ package com.example.utsav.schooldemo.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.DBClasses.SQLiteHandler;
+import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements
     SessionManager session;
     static String spinnerValue;
     int count = 0;
+    private CoordinatorLayout coordinatorLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements
         session = new SessionManager(getApplicationContext());
         spinner.setOnItemSelectedListener(this);
         loadSpinner();
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id
+                .coordinatorLayout_main);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Snackbar.make(coordinatorLayout, "Login Failed...", android.support.design.widget.Snackbar.LENGTH_LONG).show();
                 }
 
             }
@@ -112,8 +118,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Login Error: " + error.getMessage());
-                Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();
+                HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                 // hideDialog();
             }
         }) {

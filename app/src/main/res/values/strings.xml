@@ -18,4 +18,9 @@
     <string name="title_activity_news">News</string>
     <string name="title_activity_contacts">Contacts</string>
     <string name="title_activity_resources">Resources</string>
+
+    <string name="error_timeout">Your Connection Timed Out</string>
+    <string name="error_auth_failure">Unrecognized user</string>
+    <string name="error_network">Server Just Messed Up</string>
+    <string name="error_parser">Unparsable Data</string>
 </resources>

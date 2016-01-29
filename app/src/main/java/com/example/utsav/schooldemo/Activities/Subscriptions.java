@@ -3,6 +3,7 @@ package com.example.utsav.schooldemo.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,6 +22,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.Demo;
 import com.example.utsav.schooldemo.DBClasses.SubsDB;
+import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;
@@ -46,6 +48,7 @@ public class Subscriptions extends AppCompatActivity {
     SubsDB subsDB;
     //boolean isCheck = false;
     List<String> data = new ArrayList();
+    private CoordinatorLayout coordinatorLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +57,8 @@ public class Subscriptions extends AppCompatActivity {
         setSupportActionBar(toolbar);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id
+                .coordinatorLayout_subscriptions);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,8 +127,7 @@ public class Subscriptions extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "Login Error: " + error.getMessage());
-                        Toast.makeText(getApplicationContext(),
-                                error.getMessage(), Toast.LENGTH_LONG).show();
+                        HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                         // hideDialog();
                     }
                 }) {

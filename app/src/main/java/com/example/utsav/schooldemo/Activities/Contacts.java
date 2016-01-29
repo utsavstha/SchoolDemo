@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -37,6 +38,7 @@ import com.example.utsav.schooldemo.DBClasses.ContactsDB;
 import com.example.utsav.schooldemo.DataClasses.ContactsData;
 import com.example.utsav.schooldemo.DataClasses.NoticeData;
 import com.example.utsav.schooldemo.R;
+import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.Utils.RVAdapterContacts;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
 import com.example.utsav.schooldemo.app.AppConfig;
@@ -66,6 +68,7 @@ public class Contacts extends AppCompatActivity implements
     private DrawerLayout mDrawerLayout; //object that holds id to drawer layout
     private ActionBarDrawerToggle mDrawerToggle;
     ContactsDB contactsDB;
+    private CoordinatorLayout coordinatorLayout;
     private List<ContactsData> listData = new ArrayList<>() ; //creating list of the ContactsData class
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +83,8 @@ public class Contacts extends AppCompatActivity implements
         recyclerView = (RecyclerView) findViewById(R.id.rv_list_contacts);
         progressView = (CircularProgressView) findViewById(R.id.progress_view_contacts);
         toolbar.showOverflowMenu();
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id
+                .coordinatorLayout_contacts);
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
                 toolbar,
@@ -117,20 +122,21 @@ public class Contacts extends AppCompatActivity implements
                     public void onItemClick(View view, final int position) {
                         // custom dialog
                         final Dialog dialog = new Dialog(Contacts.this);
-                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); //before
+                        //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); //before
                         dialog.setContentView(R.layout.custom_alert);
-                       // dialog.setTitle("Choose an Action for Contact");
+                        dialog.setTitle("Call: " + listData.get(position).getNameContacts());
 
                         // set the custom dialog components - text, image and button
                         Button call = (Button) dialog.findViewById(R.id.call);
                         Button email = (Button) dialog.findViewById(R.id.email);
+                        //tv.setText("Call: "+listData.get(position).getNameContacts());
                         // if button is clicked, close the custom dialog
                         call.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 Intent intent = new Intent(Intent.ACTION_DIAL,
                                         Uri.parse("tel:" + listData.get(position).getPhone().trim()));
-                                    startActivity(intent);
+                                startActivity(intent);
 
                             }
                         });
@@ -146,12 +152,6 @@ public class Contacts extends AppCompatActivity implements
                                 startActivity(Intent.createChooser(emailIntent, "Send email via..."));
                             }
                         });
-                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                        lp.copyFrom(dialog.getWindow().getAttributes());
-                        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                        dialog.show();
-                        dialog.getWindow().setAttributes(lp);
                         dialog.show();
 
                     }
@@ -212,7 +212,7 @@ public class Contacts extends AppCompatActivity implements
                                     String email = noticeValue.getString("email");
                                     String phone = noticeValue.getString("phone");
                                     //add data to db
-                                   // db.addNotice(title, message, month, day, year);
+                                    // db.addNotice(title, message, month, day, year);
                                     contactsDB.addContacts(name, designation, email, phone);
 
                                 }
@@ -240,9 +240,7 @@ public class Contacts extends AppCompatActivity implements
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "Login Error: " + error.getMessage());
-                        Toast.makeText(getApplicationContext(),
-                                error.getMessage(), Toast.LENGTH_LONG).show();
-                        // hideDialog();
+                        HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                     }
                 }) {
 
@@ -303,5 +301,11 @@ public class Contacts extends AppCompatActivity implements
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+    @Override
+    public void onBackPressed()
+    {
+        finish();
+        startActivity(new Intent(Contacts.this, NoticeAndStuff.class));
     }
 }

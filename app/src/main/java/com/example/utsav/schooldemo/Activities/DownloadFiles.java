@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -33,6 +34,7 @@ import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.DBClasses.DownloadsDB;
 import com.example.utsav.schooldemo.DBClasses.NoticeDB;
 import com.example.utsav.schooldemo.DBClasses.PathsDB;
+import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.Utils.RVAdapterDownloads;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
 import com.example.utsav.schooldemo.DBClasses.SubsDB;
@@ -82,7 +84,7 @@ public class DownloadFiles extends AppCompatActivity implements
     private List<DownloadData> listData = new ArrayList<>() ; //creating list of the Download data class
     DownloadsDB downloadsDB;
     List<String> subsData = new ArrayList<>();
-
+    private CoordinatorLayout coordinatorLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +105,8 @@ public class DownloadFiles extends AppCompatActivity implements
                 R.string.drawer_open,
                 R.string.drawer_close);//needed to show the hamburger icon
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id
+                .coordinatorLayout_downloads);
          //linking drawer layout and drawer toggle
         //drawer toggle keeps the track of who is active on the screen drawer or main content
         mDrawerToggle.syncState(); //Synchronizes the state of hamburger icon
@@ -228,8 +232,7 @@ public class DownloadFiles extends AppCompatActivity implements
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "Login Error: " + error.getMessage());
-                        Toast.makeText(getApplicationContext(),
-                                error.getMessage(), Toast.LENGTH_LONG).show();
+                        HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                         // hideDialog();
                     }
                 }) {
@@ -426,22 +429,11 @@ public class DownloadFiles extends AppCompatActivity implements
         }
         return type;
     }
-    /*@Override
+    @Override
     public void onBackPressed()
     {
-        // moveTaskToBack(true);
-        if(count == 1)
-        {
-            count=0;
-            finish();
-        }
-        else
-        {
-            Toast.makeText(getApplicationContext(), "Press Back again to quit.", Toast.LENGTH_SHORT).show();
-            count++;
-        }
-
-        return;
-    }*/
+        finish();
+        startActivity(new Intent(DownloadFiles.this, NoticeAndStuff.class));
+    }
 
 }

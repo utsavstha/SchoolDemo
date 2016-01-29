@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,6 +25,7 @@ import com.example.utsav.schooldemo.DBClasses.DownloadsDB;
 import com.example.utsav.schooldemo.DBClasses.NoticeDB;
 import com.example.utsav.schooldemo.DBClasses.PathsDB;
 import com.example.utsav.schooldemo.DBClasses.SubsDB;
+import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.Logout;
@@ -45,6 +47,7 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
     NoticeDB db;
     PathsDB pathsDB;
     SubsDB subsDB;
+    private CoordinatorLayout coordinatorLayout;
     DownloadsDB downloadsDB;
     int count = 0;
     SessionManager sessionManager;
@@ -62,6 +65,8 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         subsDB = new SubsDB(getApplicationContext());
         downloadsDB = new DownloadsDB(getApplicationContext());
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_abouts);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id
+                .coordinatorLayout_abouts);
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
                 toolbar,
@@ -143,8 +148,7 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "Login Error: " + error.getMessage());
-                        Toast.makeText(getApplicationContext(),
-                                error.getMessage(), Toast.LENGTH_LONG).show();
+                        HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                         // hideDialog();
                     }
                 }) {
@@ -172,22 +176,12 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
 
     }
 
-    /*@Override
+    @Override
     public void onBackPressed()
     {
-        if(count == 1)
-        {
-            count=0;
-            finish();
-        }
-        else
-        {
-            Toast.makeText(getApplicationContext(), "Press Back again to quit.", Toast.LENGTH_SHORT).show();
-            count++;
-        }
-
-        return;
-    }*/
+        finish();
+        startActivity(new Intent(Abouts.this, NoticeAndStuff.class));
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

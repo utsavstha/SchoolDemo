@@ -11,13 +11,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.utsav.schooldemo.R;
 
 import org.sufficientlysecure.htmltextview.HtmlTextView;
 
-public class Details extends AppCompatActivity implements OnTouchListener {
+public class Details extends AppCompatActivity {
 
     TextView title;
     TextView date;
@@ -28,7 +29,9 @@ public class Details extends AppCompatActivity implements OnTouchListener {
     float mBaseRatio;
     float fontsize = 13;
     float titleSize = 30;
+    SeekBar seekBar;
     FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +49,10 @@ public class Details extends AppCompatActivity implements OnTouchListener {
         });
         fab = (FloatingActionButton) findViewById(R.id.fab_details);
         title = (TextView) findViewById(R.id.title_details);
-        date = (TextView)findViewById(R.id.date_details);
-        message = (HtmlTextView ) findViewById(R.id.message_details);
+        date = (TextView) findViewById(R.id.date_details);
+        message = (HtmlTextView) findViewById(R.id.message_details);
+        seekBar = (SeekBar) findViewById(R.id.seekBar1);
+
         title.setTypeface(null, Typeface.BOLD);
         title.setText(getIntent().getStringExtra("title"));
         date.setText(getIntent().getStringExtra("date"));
@@ -67,10 +72,10 @@ public class Details extends AppCompatActivity implements OnTouchListener {
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent intent = new Intent(Intent.ACTION_SEND);
                                 intent.setType("text/plain");
-                                String shareText = "Title: "+getIntent().getStringExtra("title")+"\n\n Date: "+getIntent().getStringExtra("date")
-                                        +"\n\nMessage: "+getIntent().getStringExtra("message")+
+                                String shareText = "Title: " + getIntent().getStringExtra("title") + "\n\n Date: " + getIntent().getStringExtra("date")
+                                        + "\n\nMessage: " + getIntent().getStringExtra("message") +
                                         "\n\nsource: SchoolDemo";
-                                intent.putExtra(Intent.EXTRA_TEXT,shareText );
+                                intent.putExtra(Intent.EXTRA_TEXT, shareText);
                                 startActivity(Intent.createChooser(intent, "Share With"));
                             }
                         })
@@ -83,18 +88,39 @@ public class Details extends AppCompatActivity implements OnTouchListener {
                         .show();
 
 
+            }
+        });
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int progress = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
+                progress = progresValue;
+                message.setTextSize(progress + fontsize);
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
         });
+
     }
+
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         startActivity(new Intent(Details.this, NoticeAndStuff.class));
         finish();
     }
 
-    @Override
+    /*@Override
     public boolean onTouch(View v, MotionEvent event) {
         return false;
     }
@@ -111,7 +137,7 @@ public class Details extends AppCompatActivity implements OnTouchListener {
                 mRatio = Math.min(1024.0f, Math.max(0.1f, mBaseRatio * multi));
                 //title.setTextSize(mRatio + titleSize);
                // date.setTextSize(mRatio + fontsize);
-                message.setTextSize(mRatio + fontsize);
+
             }
         }
         return true;
@@ -121,6 +147,6 @@ public class Details extends AppCompatActivity implements OnTouchListener {
         int dx = (int) (event.getX(0) - event.getX(1));
         int dy = (int) (event.getY(0) - event.getY(1));
         return (int) (Math.sqrt(dx * dx + dy * dy));
-    }
+    }*/
 
 }

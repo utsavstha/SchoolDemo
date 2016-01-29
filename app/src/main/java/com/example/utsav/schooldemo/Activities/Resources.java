@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -27,6 +28,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.utsav.schooldemo.DBClasses.ContactsDB;
 import com.example.utsav.schooldemo.DataClasses.ResourcesData;
 import com.example.utsav.schooldemo.R;
+import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.Utils.RVAdapterResources;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
 import com.example.utsav.schooldemo.app.AppConfig;
@@ -54,6 +56,7 @@ public class Resources extends AppCompatActivity implements
     private DrawerLayout mDrawerLayout; //object that holds id to drawer layout
     private ActionBarDrawerToggle mDrawerToggle;
     private List<ResourcesData> listData = new ArrayList<>();
+    private CoordinatorLayout coordinatorLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +70,8 @@ public class Resources extends AppCompatActivity implements
         recyclerView = (RecyclerView) findViewById(R.id.rv_list_resources);
         progressView = (CircularProgressView) findViewById(R.id.progress_view_resources);
         toolbar.showOverflowMenu();
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id
+                .coordinatorLayout_resources);
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
                 toolbar,
@@ -165,9 +170,7 @@ public class Resources extends AppCompatActivity implements
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "Login Error: " + error.getMessage());
-                        Toast.makeText(getApplicationContext(),
-                                error.getMessage(), Toast.LENGTH_LONG).show();
-                        // hideDialog();
+                        HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                     }
                 }) {
 
@@ -203,6 +206,26 @@ public class Resources extends AppCompatActivity implements
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        return false;
+        Intent intent = null;
+        if(item.getItemId() == R.id.news){
+            //intent = new Intent(NoticeAndStuff.this, )
+        }else if(item.getItemId() == R.id.abouts){
+            startActivity(new Intent(Resources.this, Abouts.class));
+        }else if(item.getItemId() == R.id.feed_back){
+            startActivity(new Intent(Resources.this, FeedBack.class));
+        }else if (item.getItemId() == R.id.downloads){
+            startActivity(new Intent(Resources.this, DownloadFiles.class));
+        }else if(item.getItemId() == R.id.contacts){
+            startActivity(new Intent(Resources.this, Contacts.class));
+        }else if(item.getItemId() == R.id.notice_board) {
+            startActivity(new Intent(Resources.this, NoticeAndStuff.class));
+        }
+        return true;
+    }
+    @Override
+    public void onBackPressed()
+    {
+        finish();
+        startActivity(new Intent(Resources.this, NoticeAndStuff.class));
     }
 }

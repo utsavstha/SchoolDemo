@@ -3,6 +3,7 @@ package com.example.utsav.schooldemo.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -25,6 +26,7 @@ import com.example.utsav.schooldemo.DBClasses.DownloadsDB;
 import com.example.utsav.schooldemo.DBClasses.NoticeDB;
 import com.example.utsav.schooldemo.DBClasses.PathsDB;
 import com.example.utsav.schooldemo.DBClasses.SubsDB;
+import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.Logout;
@@ -49,6 +51,7 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
     DownloadsDB downloadsDB;
     Button send;
     int count = 0;
+    private CoordinatorLayout coordinatorLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +69,8 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
                 R.string.drawer_open,
                 R.string.drawer_close);//needed to show the hamburger icon
         sessionManager = new SessionManager(getApplicationContext());
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id
+                .coordinatorLayout_feedback);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
          /*linking drawer layout and drawer toggle
         drawer toggle keeps the track of who is active on the screen drawer or main content*/
@@ -131,8 +136,7 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
                                     Log.e(TAG, "Login Error: " + error.getMessage());
-                                    Toast.makeText(getApplicationContext(),
-                                            error.getMessage(), Toast.LENGTH_LONG).show();
+                                    HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                                     // hideDialog();
                                 }
                             }) {
@@ -185,22 +189,12 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
         return true;
     }
 
-   /* @Override
+    @Override
     public void onBackPressed()
     {
-        if(count == 1)
-        {
-            count=0;
-            finish();
-        }
-        else
-        {
-            Toast.makeText(getApplicationContext(), "Press Back again to quit.", Toast.LENGTH_SHORT).show();
-            count++;
-        }
-
-        return;
-    }*/
+        finish();
+        startActivity(new Intent(FeedBack.this, NoticeAndStuff.class));
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

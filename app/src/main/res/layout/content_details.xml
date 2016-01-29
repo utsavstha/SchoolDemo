@@ -29,10 +29,10 @@
             android:text="28 Aug 2012" />
 
         <ScrollView
-            android:layout_below="@+id/date_details"
-            android:id="@+id/SCROLLER_ID"
+            android:id="@+id/scroller_id"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/date_details"
             android:fillViewport="true"
             android:scrollbars="vertical">
 
@@ -40,11 +40,21 @@
                 android:id="@+id/message_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:layout_marginTop="30dp"
                 android:scrollHorizontally="true"
                 android:text="This is a dummy message" />
         </ScrollView>
-    </RelativeLayout>
 
+
+
+    </RelativeLayout>
+    <SeekBar
+        android:layout_marginBottom="120dp"
+        android:id="@+id/seekBar1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="26dp"
+        android:max="10" />
 </RelativeLayout>

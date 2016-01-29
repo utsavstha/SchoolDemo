@@ -2,6 +2,7 @@ package com.example.utsav.schooldemo.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,6 +18,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.DBClasses.SQLiteHandler;
+import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;
@@ -40,6 +42,7 @@ public class SplashScreen extends AppCompatActivity {
     private Handler handler = new Handler();
     private int mProgress = 0;
     SessionManager session;
+    private CoordinatorLayout coordinatorLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +56,8 @@ public class SplashScreen extends AppCompatActivity {
             startActivity(intent);
             //finish();
         }
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id
+                .coordinatorLayout_splash);
         db = new SQLiteHandler(getApplicationContext());
         try {
             db.deleteClients();
@@ -105,6 +110,7 @@ public class SplashScreen extends AppCompatActivity {
                                             mElasticDownloadView.setProgress(mProgress);
                                             Log.d("Progress:", "" + mElasticDownloadView.getProgress());
                                             if (i >= length-1) {
+                                                mElasticDownloadView.setProgress(100);
                                                 mElasticDownloadView.success();
                                                 Intent intent = new Intent(SplashScreen.this, MainActivity.class);
                                                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -135,9 +141,7 @@ public class SplashScreen extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "Login Error: " + error.getMessage());
-                        Toast.makeText(getApplicationContext(),
-                                error.getMessage(), Toast.LENGTH_LONG).show();
-                        // hideDialog();
+                        HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                     }
                 }) {
 

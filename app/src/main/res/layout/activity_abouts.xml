@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:id="@+id/coordinatorLayout_abouts"
     tools:context="com.example.utsav.schooldemo.Activities.Abouts">
 
     <android.support.design.widget.AppBarLayout
