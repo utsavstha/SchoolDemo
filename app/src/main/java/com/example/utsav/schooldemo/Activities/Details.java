@@ -117,7 +117,7 @@ public class Details extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         startActivity(new Intent(Details.this, NoticeAndStuff.class));
-        finish();
+        finishAffinity();
     }
 
     /*@Override

@@ -60,12 +60,6 @@ public class NoticeAndStuff extends AppCompatActivity implements
 
 
     public static String TAG = NoticeAndStuff.class.getSimpleName();
-    int[] mResources = {
-            R.drawable.a,
-            R.drawable.b,
-            R.drawable.c
-
-    };
     private ViewPager viewPager;
     private RecyclerView recyclerView;  //recycler view variable
     private List<NoticeData> listData = new ArrayList<>() ; //creating list of the Notice data class
@@ -103,6 +97,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
         recyclerView = (RecyclerView) findViewById(R.id.rv_list);
         progressView = (CircularProgressView) findViewById(R.id.progress_view);
         viewPager = (ViewPager)findViewById(R.id.pager_introduction);
+
         imageList = new ArrayList<>();
         imageDB = new ImageDB(getApplicationContext());
         mDrawerToggle = new ActionBarDrawerToggle(this,
@@ -127,8 +122,9 @@ public class NoticeAndStuff extends AppCompatActivity implements
         db = new NoticeDB(getApplicationContext());
         subsData = subsDB.getSubsList();
         progressView.setColor(Color.parseColor("#D32F2F"));
-
         if(session.getFetchData()){
+            imageDB.addImageList("http://www.xyz.com"); //to feed view pager and the circle indicator with some initializing data
+            populateImageViews();
             fetchDataAndAddToDb(cid);
             progressView.setVisibility(View.VISIBLE);
             progressView.startAnimation();
@@ -206,16 +202,18 @@ public class NoticeAndStuff extends AppCompatActivity implements
 
                                 }
                                 populateRecyclerView();
-                                JSONArray images = jObj.getJSONArray("image");
-                                imageDB.deleteRecords();
-                                for(int j = 0; j < images.length(); j++){
-                                    String image = images.getString(j);
-                                    //imageList.add(image);
-                                    imageDB.addImageList(image);
-                                    populateImageViews();
+                               // if(session.getKeyImages()){
+                                    JSONArray images = jObj.getJSONArray("image");
+                                    imageDB.deleteRecords();
+                                    for(int j = 0; j < images.length(); j++){
+                                        String image = images.getString(j);
+                                        //imageList.add(image);
+                                        imageDB.addImageList(image);
 
-                                }
-
+                                    }
+                               // }
+                               //imageList.clear();
+                                populateImageViews();
 
                             } else {
                                 // Error in login. Get the error message
@@ -276,7 +274,9 @@ public class NoticeAndStuff extends AppCompatActivity implements
     }
 
     private void populateImageViews() {
+        imageList.clear();
         imageList = imageDB.getDownloadList();
+        Log.d(TAG, imageList.size()+"");
         customPagerAdapter = new CustomPagerAdapter(this, imageList);
         viewPager.setAdapter(customPagerAdapter);
         InkPageIndicator inkPageIndicator = (InkPageIndicator) findViewById(R.id.indicator);
@@ -360,6 +360,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
         {
             count=0;
             finish();
+            System.exit(0);
         }
         else
         {

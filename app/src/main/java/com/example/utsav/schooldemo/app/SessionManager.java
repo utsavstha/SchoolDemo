@@ -29,6 +29,7 @@ public class SessionManager {
     private static final String KEY_CONTACTS = "contacts";
     private static final String KEY_FETCH = "fetchData";
     private static final String KEY_DOWNLOADS = "downloadFile";
+    private static final String KEY_IMAGES = "imagedownload";
     public SessionManager(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
@@ -60,6 +61,11 @@ public class SessionManager {
         editor.commit();
         Log.d(TAG, "Key contacts set to " + contacts);
     }
+    public void setKeyImages(boolean image){        //false if data already exits
+        editor.putBoolean(KEY_IMAGES, image);
+        editor.commit();
+        Log.d(TAG, "Key contacts set to " + image);
+    }
     public boolean isLoggedIn(){
         return pref.getBoolean(KEY_IS_LOGGEDIN, false);
     }
@@ -72,5 +78,8 @@ public class SessionManager {
 
     public boolean getKeyContacts(){
         return pref.getBoolean(KEY_CONTACTS, true);     //false if file list exists and no download required
+    }
+    public boolean getKeyImages(){
+        return pref.getBoolean(KEY_IMAGES, true);     //false if file list exists and no download required
     }
 }

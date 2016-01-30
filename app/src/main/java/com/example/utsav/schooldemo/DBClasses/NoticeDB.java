@@ -83,7 +83,7 @@ public class NoticeDB extends SQLiteOpenHelper {
         long id = db.insert(TABLE_NOTICES, null, values);
         db.close(); // Closing database connection
 
-        Log.d(TAG, "New user inserted into sqlite: " + id);
+        Log.d(TAG, "New notice inserted into sqlite: " + id);
     }
 
     /**
