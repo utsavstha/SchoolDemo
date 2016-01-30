@@ -23,12 +23,12 @@ public class Details extends AppCompatActivity {
     TextView title;
     TextView date;
     HtmlTextView message;
-    final static float STEP = 200;
+    //final static float STEP = 200;
     float mRatio = 1.0f;
-    int mBaseDist;
-    float mBaseRatio;
-    float fontsize = 13;
-    float titleSize = 30;
+   // int mBaseDist;
+   // float mBaseRatio;
+    float fontsize = 18;
+   // float titleSize = 30;
     SeekBar seekBar;
     FloatingActionButton fab;
 
@@ -84,7 +84,7 @@ public class Details extends AppCompatActivity {
                                 // do nothing
                             }
                         })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setIcon(android.R.drawable.alert_dark_frame)
                         .show();
 
 

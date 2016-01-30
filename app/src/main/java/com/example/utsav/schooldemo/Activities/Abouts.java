@@ -1,18 +1,26 @@
 package com.example.utsav.schooldemo.Activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +44,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Abouts extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -47,9 +56,14 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
     NoticeDB db;
     PathsDB pathsDB;
     SubsDB subsDB;
+    CardView cardView;
+    String contacts = "";
+    String webUrl = "";
+    FloatingActionButton floatingActionButton;
     private CoordinatorLayout coordinatorLayout;
     DownloadsDB downloadsDB;
     int count = 0;
+    String longitude, latitude, pinName;
     SessionManager sessionManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +79,7 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         subsDB = new SubsDB(getApplicationContext());
         downloadsDB = new DownloadsDB(getApplicationContext());
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_abouts);
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_abouts);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id
                 .coordinatorLayout_abouts);
         mDrawerToggle = new ActionBarDrawerToggle(this,
@@ -76,7 +91,7 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
          /*linking drawer layout and drawer toggle
         drawer toggle keeps the track of who is active on the screen drawer or main content*/
         mDrawerToggle.syncState(); //Synchronizes the state of hamburger icon
-
+        cardView = (CardView) findViewById(R.id.cardView_abouts);
         name = (TextView) findViewById(R.id.name);
         email = (TextView) findViewById(R.id.email);
         contact = (TextView) findViewById(R.id.contact);
@@ -85,7 +100,57 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         name.setTypeface(null, Typeface.BOLD);
         sessionManager = new SessionManager(getApplicationContext());
         fetchAndFeedData();
+        cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Dialog dialog = new Dialog(Abouts.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); //before
+                dialog.setContentView(R.layout.custom_alert);
+                //dialog.setTitle("Call: " + listData.get(position).getNameContacts());
 
+                // set the custom dialog components - text, image and button
+                Button call = (Button) dialog.findViewById(R.id.call);
+                Button email = (Button) dialog.findViewById(R.id.email);
+                email.setText("Visit Website");
+                //tv.setText("Call: "+listData.get(position).getNameContacts());
+                // if button is clicked, close the custom dialog
+                call.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_DIAL,
+                                Uri.parse("tel:" + contacts.trim()));
+                        startActivity(intent);
+
+                    }
+                });
+
+                email.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String url = webUrl;
+                        if (!url.startsWith("http://") && !url.startsWith("https://"))
+                            url = "http://" + url;
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        startActivity(i);
+                    }
+                });
+                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                lp.copyFrom(dialog.getWindow().getAttributes());
+                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                dialog.show();
+                dialog.getWindow().setAttributes(lp);
+            }
+        });
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                        Uri.parse("geo:0,0?q="+latitude+","+longitude+" (" + pinName + ")"));
+                startActivity(intent);
+            }
+        });
     }
 
     private void fetchAndFeedData() {
@@ -114,21 +179,18 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
                                 //Hard coded by the array index
                                 JSONObject value = client.getJSONObject(0);
                                 name.setText(value.getString("name"));
-
+                                pinName = value.getString("name");
                                 email.setText("Email: "+value.getString("email"));
 
                                 contact.setText("Contact: "+value.getString("contact"));
-
+                                contacts = value.getString("contact");
                                 about.setText("About: "+value.getString("about"));
 
                                 website.setText("Website: "+value.getString("website"));
+                                webUrl = value.getString("website");
 
-
-
-
-
-
-
+                                longitude = value.getString("longitude");
+                                latitude = value.getString("latitude");
 
                             } else {
                                 // Error in login. Get the error message

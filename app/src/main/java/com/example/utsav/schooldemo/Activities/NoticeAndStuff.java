@@ -49,6 +49,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -154,7 +155,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
                         Intent intent = new Intent(NoticeAndStuff.this, Details.class);
                         intent.putExtra("title",listData.get(position).getTitle());
                         intent.putExtra("date", listData.get(position).getDay()+" "+
-                                                listData.get(position).getMonth()+" "+
+                                                getMonth(listData.get(position).getMonth())+" "+
                                                 listData.get(position).getYear());
                         intent.putExtra("message",listData.get(position).getMessage());
 
@@ -163,7 +164,10 @@ public class NoticeAndStuff extends AppCompatActivity implements
                 })
         );
     }
-
+    public String getMonth(String month) {
+        int monthValue = Integer.parseInt(month);
+        return new DateFormatSymbols().getMonths()[monthValue-1];
+    }
     private  void fetchDataAndAddToDb(final String cid) {
         final String tag_string_req = "fetch data";
 

@@ -38,6 +38,7 @@
 
             <org.sufficientlysecure.htmltextview.HtmlTextView
                 android:id="@+id/message_details"
+                android:textSize="20sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
