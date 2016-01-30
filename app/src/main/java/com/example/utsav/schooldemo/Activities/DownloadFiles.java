@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -206,10 +207,8 @@ public class DownloadFiles extends AppCompatActivity implements
                                     //add data to db
                                     pathsDB.addPath(id, "xxx");
                                     downloadsDB.addDownloadList(id, title, link, size, "xxx", day, month, year);
-
                                 }
                                 populateRecyclerView();
-
                             } else {
                                 // Error in login. Get the error message
                                 String errorMsg = jObj.getString("error_msg");
@@ -414,7 +413,8 @@ public class DownloadFiles extends AppCompatActivity implements
     void showError(final String err){
         runOnUiThread(new Runnable() {
             public void run() {
-                Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG).show();
+                //Toast.makeText(getApplicationContext(), err, Toast.LENGTH_LONG).show();
+                Snackbar.make(coordinatorLayout,R.string.error_timeout,Snackbar.LENGTH_LONG).show();
             }
         });
     }
