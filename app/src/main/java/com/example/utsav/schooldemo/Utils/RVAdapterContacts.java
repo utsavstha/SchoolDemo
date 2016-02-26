@@ -8,10 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.utsav.schooldemo.DataClasses.ContactsData;
-import com.example.utsav.schooldemo.DataClasses.NoticeData;
 import com.example.utsav.schooldemo.R;
-
-import org.sufficientlysecure.htmltextview.HtmlTextView;
 
 import java.util.List;
 

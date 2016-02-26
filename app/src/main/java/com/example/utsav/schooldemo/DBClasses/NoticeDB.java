@@ -33,6 +33,7 @@ public class NoticeDB extends SQLiteOpenHelper {
     private static final String KEY_ID = "id";
     private static final String KEY_TTTLE = "title";
     private static final String KEY_MESSAGE = "message";
+    private static final String KEY_WEEKDAY = "weekday";
     private static final String KEY_MONTH = "month";
     private static final String KEY_DAY = "day";
     private static final String KEY_YEAR = "year";
@@ -49,12 +50,13 @@ public class NoticeDB extends SQLiteOpenHelper {
                         "(" + KEY_ID + " INTEGER PRIMARY KEY,"
                             + KEY_TTTLE + " TEXT,"
                             + KEY_MESSAGE + " TEXT,"                //in case of weird error change this data type
+                            + KEY_WEEKDAY + " TEXT,"
                             + KEY_MONTH + " TEXT,"
                             + KEY_DAY + " TEXT,"
                             + KEY_YEAR + " TEXT" + ")";
         db.execSQL(CREATE_NOTICE_TABLE);
 
-        Log.d(TAG, "Database tables created");
+        //Log.d(TAG, "Database tables created");
     }
 
     // Upgrading database
@@ -70,12 +72,13 @@ public class NoticeDB extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      * */
-    public void addNotice(String title, String message, String month, String day, String year) {
+    public void addNotice(String title, String message, String weekday ,String month, String day, String year) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_TTTLE, title); // Title
         values.put(KEY_MESSAGE, message); // message
+        values.put(KEY_WEEKDAY, weekday); // month
         values.put(KEY_MONTH, month); // month
         values.put(KEY_DAY, day); // day
         values.put(KEY_YEAR, year); // year
@@ -83,7 +86,7 @@ public class NoticeDB extends SQLiteOpenHelper {
         long id = db.insert(TABLE_NOTICES, null, values);
         db.close(); // Closing database connection
 
-        Log.d(TAG, "New notice inserted into sqlite: " + id);
+        //Log.d(TAG, "New notice inserted into sqlite: " + id);
     }
 
     /**
@@ -100,6 +103,7 @@ public class NoticeDB extends SQLiteOpenHelper {
         while(res.isAfterLast() == false){
             array_list.add(new NoticeData(res.getString(res.getColumnIndex(KEY_TTTLE)),
                             res.getString(res.getColumnIndex(KEY_MESSAGE)),
+                            res.getString(res.getColumnIndex(KEY_WEEKDAY)),
                             res.getString(res.getColumnIndex(KEY_DAY)),
                             res.getString(res.getColumnIndex(KEY_MONTH)),
                             res.getString(res.getColumnIndex(KEY_YEAR))));
@@ -117,7 +121,7 @@ public class NoticeDB extends SQLiteOpenHelper {
         db.delete(TABLE_NOTICES, null, null);
         db.close();
 
-        Log.d(TAG, "Deleted all user info from sqlite");
+       // Log.d(TAG, "Deleted all user info from sqlite");
     }
 
 }

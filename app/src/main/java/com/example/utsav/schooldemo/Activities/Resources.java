@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
@@ -17,6 +16,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -25,7 +26,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.utsav.schooldemo.DBClasses.ContactsDB;
 import com.example.utsav.schooldemo.DataClasses.ResourcesData;
 import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.HandleVolleyError;
@@ -33,6 +33,8 @@ import com.example.utsav.schooldemo.Utils.RVAdapterResources;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
+import com.example.utsav.schooldemo.app.Logout;
+import com.example.utsav.schooldemo.app.PopulateViews;
 import com.example.utsav.schooldemo.app.SessionManager;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
@@ -46,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Resources extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener{
+        NavigationView.OnNavigationItemSelectedListener, PopulateViews{
     public static String TAG = Resources.class.getSimpleName();
     SessionManager sessionManager;
     CircularProgressView progressView;
@@ -63,6 +65,7 @@ public class Resources extends AppCompatActivity implements
         setContentView(R.layout.activity_resources);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_resources);
         setSupportActionBar(toolbar);
+        toolbar.showOverflowMenu();
         mDrawer = (NavigationView) findViewById(R.id.main_drawer_resources);//initialising navigation view
         mDrawer.setNavigationItemSelectedListener(this);           //tells this activity will handle click events
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_to_refresh_resources);
@@ -129,7 +132,10 @@ public class Resources extends AppCompatActivity implements
                         try {
                             JSONObject jObj = new JSONObject(response);
                             boolean error = jObj.getBoolean("error");
-
+                            int count = jObj.getInt("count");
+                            if(count == 0){
+                                Snackbar.make(coordinatorLayout, " No data to be displayed...", Snackbar.LENGTH_LONG).show();
+                            }
                             // Check for error node in json
                             if (!error) {
                                 // data successfully fetched
@@ -149,7 +155,7 @@ public class Resources extends AppCompatActivity implements
                                     listData.add(new ResourcesData(title, year,url,day, month));
 
                                 }
-                                populateRecyclerView(listData);
+                                populateRecyclerView();
 
                             } else {
                                 // Error in login. Get the error message
@@ -193,7 +199,15 @@ public class Resources extends AppCompatActivity implements
         }, 1);
     }
 
-    private void populateRecyclerView(List<ResourcesData> listData) {
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_notice_and_stuff, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public void populateRecyclerView() {
         progressView.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
         RVAdapterResources adapter = new RVAdapterResources(listData);
@@ -208,24 +222,59 @@ public class Resources extends AppCompatActivity implements
     public boolean onNavigationItemSelected(MenuItem item) {
         Intent intent = null;
         if(item.getItemId() == R.id.news){
-            //intent = new Intent(NoticeAndStuff.this, )
+            startActivity(new Intent(Resources.this, News.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(Resources.this, Abouts.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(Resources.this, FeedBack.class));
+            finishAffinity();
         }else if (item.getItemId() == R.id.downloads){
             startActivity(new Intent(Resources.this, DownloadFiles.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.contacts){
             startActivity(new Intent(Resources.this, Contacts.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.notice_board) {
             startActivity(new Intent(Resources.this, NoticeAndStuff.class));
+            finishAffinity();
         }
         return true;
     }
     @Override
     public void onBackPressed()
     {
-        finish();
+        finishAffinity();
         startActivity(new Intent(Resources.this, NoticeAndStuff.class));
+    }
+
+
+    @Override
+    public void populateImageViews() {
+
+    }
+
+    @Override
+    public void populateOtherViews() {
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                // Red item was selected
+                Logout logout = new Logout(getApplicationContext());
+                startActivity(new Intent(Resources.this, SplashScreen.class));
+                finish();
+                return true;
+            case R.id.action_subs:
+                startActivity(new Intent(Resources.this, Subscriptions.class));
+                //finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

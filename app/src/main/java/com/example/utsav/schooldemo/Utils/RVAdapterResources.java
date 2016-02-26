@@ -6,11 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.utsav.schooldemo.DBClasses.PathsDB;
-import com.example.utsav.schooldemo.DataClasses.DownloadData;
 import com.example.utsav.schooldemo.DataClasses.ResourcesData;
 import com.example.utsav.schooldemo.R;
 

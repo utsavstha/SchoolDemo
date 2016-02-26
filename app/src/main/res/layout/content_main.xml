@@ -2,30 +2,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:padding="20dp"
+    android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_main" tools:context="com.example.utsav.schooldemo.Activities.MainActivity">
-    <Spinner
-        android:layout_marginTop="50dp"
-        android:id="@+id/client_list"
+    <TextView
+        android:id="@+id/listMessage"
+        android:textSize="18sp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="10dp"
+        android:text="@string/list_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:textSize="8sp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textColor="@color/colorAccent"
+        android:layout_below="@id/listMessage"
+        android:id="@+id/list_notice"
+        android:text="@string/notice_for_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ListView
+        android:layout_below="@id/list_notice"
+        android:paddingTop="8dp"
+        android:id="@+id/list_clients"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-
-    <EditText
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/client_list"
-        android:id="@+id/password"
-        android:password="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/password_hint"/>
-    <Button
-        android:layout_marginTop="60dp"
-        android:id="@+id/login_button"
-        android:background="@drawable/button_color"
-        android:layout_below="@+id/password"
-        android:layout_width="match_parent"
-        android:textColor="@color/colorWhite"
-        android:layout_height="wrap_content"
-        android:text="@string/button_login_text"/>
 </RelativeLayout>

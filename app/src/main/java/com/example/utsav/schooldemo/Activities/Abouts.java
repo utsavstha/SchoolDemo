@@ -9,7 +9,9 @@ import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -28,26 +30,32 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.utsav.schooldemo.R;
+import com.example.utsav.schooldemo.DBClasses.AboutsDB;
 import com.example.utsav.schooldemo.DBClasses.DownloadsDB;
 import com.example.utsav.schooldemo.DBClasses.NoticeDB;
 import com.example.utsav.schooldemo.DBClasses.PathsDB;
 import com.example.utsav.schooldemo.DBClasses.SubsDB;
+import com.example.utsav.schooldemo.DataClasses.AboutsData;
+import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.Logout;
+import com.example.utsav.schooldemo.app.PopulateViews;
 import com.example.utsav.schooldemo.app.SessionManager;
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 
-public class Abouts extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class Abouts extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        PopulateViews{
     public static String TAG = Abouts.class.getSimpleName();
     private NavigationView mDrawer;   //object to initialise navigation view
     private DrawerLayout mDrawerLayout; //object that holds id to drawer layout
@@ -59,21 +67,29 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
     CardView cardView;
     String contacts = "";
     String webUrl = "";
+    AboutsDB aboutsDB;
+    List<AboutsData> listData;
+    CircularProgressView circularProgressView;
     FloatingActionButton floatingActionButton;
     private CoordinatorLayout coordinatorLayout;
     DownloadsDB downloadsDB;
     int count = 0;
-    String longitude, latitude, pinName;
+    String longitude = "";
+    String latitude = "";
+    String pinName = "";
     SessionManager sessionManager;
+    SwipeRefreshLayout swipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_abouts);
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        circularProgressView = (CircularProgressView) findViewById(R.id.progress_view_abouts);
         setSupportActionBar(toolbar);
         mDrawer = (NavigationView) findViewById(R.id.main_drawer_aboouts);//initialising navigation view
         mDrawer.setNavigationItemSelectedListener(this);           //tells this activity will handle click events
         toolbar.showOverflowMenu();
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_to_refresh_abouts);
         db = new NoticeDB(getApplicationContext());
         pathsDB = new PathsDB(getApplicationContext());
         subsDB = new SubsDB(getApplicationContext());
@@ -82,12 +98,14 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_abouts);
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id
                 .coordinatorLayout_abouts);
+        listData= new ArrayList<>();
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
                 toolbar,
                 R.string.drawer_open,
                 R.string.drawer_close);//needed to show the hamburger icon
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        aboutsDB = new AboutsDB(getApplicationContext());
          /*linking drawer layout and drawer toggle
         drawer toggle keeps the track of who is active on the screen drawer or main content*/
         mDrawerToggle.syncState(); //Synchronizes the state of hamburger icon
@@ -99,7 +117,30 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         website = (TextView) findViewById(R.id.website);
         name.setTypeface(null, Typeface.BOLD);
         sessionManager = new SessionManager(getApplicationContext());
-        fetchAndFeedData();
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                fetchAndFeedData();
+            }
+        });
+
+        if(sessionManager.getKeyAbouts()){
+            fetchAndFeedData();
+            cardView.setVisibility(View.GONE);
+            name.setVisibility(View.GONE);
+            email.setVisibility(View.GONE);
+            contact.setVisibility(View.GONE);
+            about.setVisibility(View.GONE);
+            website.setVisibility(View.GONE);
+
+            circularProgressView.setVisibility(View.VISIBLE);
+            circularProgressView.setIndeterminate(true);
+            circularProgressView.startAnimation();
+        }else{
+            populateOtherViews();
+        }
+
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,32 +206,34 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
 
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "Login Response: " + response.toString());
+                       // Log.d(TAG, "Login Response: " + response.toString());
                         //hideDialog();
 
                         try {
                             JSONObject jObj = new JSONObject(response);
                             boolean error = jObj.getBoolean("error");
-
+                            int count = jObj.getInt("count");
+                            if(count == 0){
+                                Snackbar.make(coordinatorLayout, " No data to be displayed...", Snackbar.LENGTH_LONG).show();
+                            }
                             // Check for error node in json
                             if (!error) {
                                 // data successfully fetched
                                 JSONArray client = jObj.getJSONArray("client");
                                 //Hard coded by the array index
                                 JSONObject value = client.getJSONObject(0);
-                                name.setText(value.getString("name"));
-                                pinName = value.getString("name");
-                                email.setText("Email: "+value.getString("email"));
+                                aboutsDB.deleteClients();
+                                aboutsDB.addData(value.getString("name"),
+                                        value.getString("email"),
+                                        value.getString("contact"),
+                                        value.getString("about"),
+                                        value.getString("website"),
+                                        value.getString("longitude"),
+                                        value.getString("latitude"));
 
-                                contact.setText("Contact: "+value.getString("contact"));
-                                contacts = value.getString("contact");
-                                about.setText("About: "+value.getString("about"));
+                                populateOtherViews();
+                                sessionManager.setKeyAbouts(false);
 
-                                website.setText("Website: "+value.getString("website"));
-                                webUrl = value.getString("website");
-
-                                longitude = value.getString("longitude");
-                                latitude = value.getString("latitude");
 
                             } else {
                                 // Error in login. Get the error message
@@ -209,7 +252,7 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "Login Error: " + error.getMessage());
+                       // Log.e(TAG, "Login Error: " + error.getMessage());
                         HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                         // hideDialog();
                     }
@@ -238,10 +281,11 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
 
     }
 
+
     @Override
     public void onBackPressed()
     {
-        finish();
+        finishAffinity();
         startActivity(new Intent(Abouts.this, NoticeAndStuff.class));
     }
 
@@ -274,18 +318,62 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
     public boolean onNavigationItemSelected(MenuItem item) {
         Intent intent = null;
         if(item.getItemId() == R.id.news){
-            //intent = new Intent(NoticeAndStuff.this, )
+            startActivity(new Intent(Abouts.this, News.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.notice_board){
             startActivity(new Intent(Abouts.this, NoticeAndStuff.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(Abouts.this, FeedBack.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.downloads){
             startActivity(new Intent(Abouts.this, DownloadFiles.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.contacts){
             startActivity(new Intent(Abouts.this, Contacts.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.resources) {
             startActivity(new Intent(Abouts.this, Resources.class));
+            finishAffinity();
         }
         return true;
+    }
+
+    @Override
+    public void populateRecyclerView() {
+
+    }
+
+    @Override
+    public void populateImageViews() {
+
+    }
+
+    @Override
+    public void populateOtherViews() {
+        listData = aboutsDB.getClientList();
+
+        circularProgressView.setVisibility(View.GONE);
+
+        cardView.setVisibility(View.VISIBLE);
+        name.setVisibility(View.VISIBLE);
+        email.setVisibility(View.VISIBLE);
+        contact.setVisibility(View.VISIBLE);
+        about.setVisibility(View.VISIBLE);
+        website.setVisibility(View.VISIBLE);
+
+        name.setText(listData.get(0).getName());
+        email.setText(listData.get(0).getEmail());
+        contact.setText(listData.get(0).getContacts());
+        about.setText(listData.get(0).getAbouts());
+        website.setText(listData.get(0).getWebsite());
+        webUrl = listData.get(0).getWebsite();
+
+        longitude = listData.get(0).getLongitude();
+        latitude = listData.get(0).getLatitude();
+        pinName = listData.get(0).getName();
+        if(swipeRefreshLayout.isRefreshing()){
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 }

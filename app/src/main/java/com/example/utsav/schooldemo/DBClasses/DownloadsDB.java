@@ -60,7 +60,7 @@ public class DownloadsDB extends SQLiteOpenHelper {
                         + KEY_YEAR + " TEXT" + ")";
         db.execSQL(CREATE_NOTICE_TABLE);
 
-        Log.d(TAG, "Database tables created");
+       // Log.d(TAG, "Database tables created");
     }
 
     // Upgrading database
@@ -92,7 +92,7 @@ public class DownloadsDB extends SQLiteOpenHelper {
         long id = db.insert(TABLE_NOTICES, null, values);
         db.close(); // Closing database connection
 
-        Log.d(TAG, "New record inserted into sqlite: " + id);
+       // Log.d(TAG, "New record inserted into sqlite: " + id);
     }
 
     /**
@@ -117,7 +117,7 @@ public class DownloadsDB extends SQLiteOpenHelper {
                     res.getString(res.getColumnIndex(KEY_YEAR))));
             res.moveToNext();
         }
-        Log.d(TAG, "Data successfully retrived from sqlite: " + array_list.size());
+       // Log.d(TAG, "Data successfully retrived from sqlite: " + array_list.size());
         return array_list;
     }
 
@@ -130,6 +130,6 @@ public class DownloadsDB extends SQLiteOpenHelper {
         db.delete(TABLE_NOTICES, null, null);
         db.close();
 
-        Log.d(TAG, "Deleted all user info from sqlite");
+        //Log.d(TAG, "Deleted all user info from sqlite");
     }
 }

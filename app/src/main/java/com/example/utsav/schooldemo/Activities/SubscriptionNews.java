@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -41,9 +40,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Subscriptions extends AppCompatActivity {
-    public static String TAG = Subscriptions.class.getSimpleName();
-    AnimateCheckBox checkBox;
+public class SubscriptionNews extends AppCompatActivity {
+    public static String TAG = SubscriptionNews.class.getSimpleName();
+
     List<Demo> subsData = new ArrayList<>();
     private Set<Demo> checkedSet = new HashSet<>();
     SessionManager session;
@@ -51,6 +50,7 @@ public class Subscriptions extends AppCompatActivity {
     boolean isCheck = false;
     List<String> data = new ArrayList();
     private CoordinatorLayout coordinatorLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +64,7 @@ public class Subscriptions extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Subscriptions.this, NoticeAndStuff.class));
+                startActivity(new Intent(SubscriptionNews.this, News.class));
                 session.setKeyFetch(true);
                 finishAffinity();
             }
@@ -184,7 +184,7 @@ public class Subscriptions extends AppCompatActivity {
                 }
 
                 TextView text = (TextView) convertView.findViewById(R.id.text);
-                checkBox = (AnimateCheckBox) convertView.findViewById(R.id.checkbox);
+                final AnimateCheckBox checkBox = (AnimateCheckBox) convertView.findViewById(R.id.checkbox);
 
                 final Demo item = subsData.get(position);
                 text.setText(item.getContent());
@@ -245,12 +245,11 @@ public class Subscriptions extends AppCompatActivity {
             }
         });
     }
+
     @Override
-    public void onBackPressed()
-    {
-        startActivity(new Intent(Subscriptions.this, NoticeAndStuff.class));
-        session.setKeyFetch(true);
+    public void onBackPressed() {
+        startActivity(new Intent(SubscriptionNews.this, News.class));
+        session.setKeyNews(true);
         finishAffinity();
     }
-
 }

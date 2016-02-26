@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -29,19 +30,20 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.davidpacioianu.inkpageindicator.InkPageIndicator;
-import com.example.utsav.schooldemo.DataClasses.NoticeData;
-import com.example.utsav.schooldemo.R;
-import com.example.utsav.schooldemo.Utils.CustomPagerAdapter;
 import com.example.utsav.schooldemo.DBClasses.ImageDB;
 import com.example.utsav.schooldemo.DBClasses.NoticeDB;
 import com.example.utsav.schooldemo.DBClasses.PathsDB;
+import com.example.utsav.schooldemo.DBClasses.SubsDB;
+import com.example.utsav.schooldemo.DataClasses.NoticeData;
+import com.example.utsav.schooldemo.R;
+import com.example.utsav.schooldemo.Utils.CustomPagerAdapter;
 import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.Utils.RVAdapter;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
-import com.example.utsav.schooldemo.DBClasses.SubsDB;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.Logout;
+import com.example.utsav.schooldemo.app.PopulateViews;
 import com.example.utsav.schooldemo.app.SessionManager;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
@@ -56,7 +58,7 @@ import java.util.List;
 import java.util.Map;
 
 public class NoticeAndStuff extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener{
+        NavigationView.OnNavigationItemSelectedListener, PopulateViews{
 
 
     public static String TAG = NoticeAndStuff.class.getSimpleName();
@@ -129,8 +131,9 @@ public class NoticeAndStuff extends AppCompatActivity implements
             progressView.setVisibility(View.VISIBLE);
             progressView.startAnimation();
             recyclerView.setVisibility(View.GONE);
-            session.setKeyFetch(false);
         }else{
+            //imageDB.deleteRecords();
+           // imageDB.addImageList("http://www.xyz.com"); //to feed view pager and the circle indicator with some initializing data
             populateRecyclerView();
             populateImageViews();
         }
@@ -150,9 +153,10 @@ public class NoticeAndStuff extends AppCompatActivity implements
 
                         Intent intent = new Intent(NoticeAndStuff.this, Details.class);
                         intent.putExtra("title",listData.get(position).getTitle());
-                        intent.putExtra("date", listData.get(position).getDay()+" "+
-                                                getMonth(listData.get(position).getMonth())+" "+
-                                                listData.get(position).getYear());
+                        intent.putExtra("date", listData.get(position).getWeekday() + ", "+
+                                getMonth(listData.get(position).getMonth()) +" " +
+                                listData.get(position).getDay()+ ", "+
+                                listData.get(position).getYear());
                         intent.putExtra("message",listData.get(position).getMessage());
 
                         startActivity(intent);
@@ -175,13 +179,16 @@ public class NoticeAndStuff extends AppCompatActivity implements
 
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "Login Response: " + response.toString());
+                       // Log.d(TAG, "Login Response: " + response.toString());
                         //hideDialog();
 
                         try {
                             JSONObject jObj = new JSONObject(response);
                             boolean error = jObj.getBoolean("error");
-
+                            int count = jObj.getInt("count");
+                            if(count == 0){
+                                Snackbar.make(coordinatorLayout, " No data to be displayed...", Snackbar.LENGTH_LONG).show();
+                            }
                             // Check for error node in json
                             if (!error) {
                                 // data successfully fetched
@@ -197,8 +204,9 @@ public class NoticeAndStuff extends AppCompatActivity implements
                                     String day = noticeValue.getString("day");
                                     String month = noticeValue.getString("month");
                                     String year = noticeValue.getString("year");
+                                    String weekday = noticeValue.getString("weekday");
                                     //add data to db
-                                    db.addNotice(title, message, month, day, year);
+                                    db.addNotice(title, message, weekday, month, day, year);
 
                                 }
                                 populateRecyclerView();
@@ -212,7 +220,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
 
                                     }
                                // }
-                               //imageList.clear();
+                                session.setKeyFetch(false);
                                 populateImageViews();
 
                             } else {
@@ -229,7 +237,8 @@ public class NoticeAndStuff extends AppCompatActivity implements
                         } catch (JSONException e) {
                             // JSON error
                             e.printStackTrace();
-                            Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Snackbar.make(coordinatorLayout, e.getMessage(), Snackbar.LENGTH_LONG).show();
+                            session.setKeyNews(true);
                         }
 
                     }
@@ -237,7 +246,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "Login Error: " + error.getMessage());
+                        //Log.e(TAG, "Login Error: " + error.getMessage());
                         HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                         // hideDialog();
                     }
@@ -273,10 +282,11 @@ public class NoticeAndStuff extends AppCompatActivity implements
 
     }
 
-    private void populateImageViews() {
+    @Override
+    public void populateImageViews() {
         imageList.clear();
         imageList = imageDB.getDownloadList();
-        Log.d(TAG, imageList.size()+"");
+       // Log.d(TAG, imageList.size()+"");
         customPagerAdapter = new CustomPagerAdapter(this, imageList);
         viewPager.setAdapter(customPagerAdapter);
         InkPageIndicator inkPageIndicator = (InkPageIndicator) findViewById(R.id.indicator);
@@ -284,21 +294,32 @@ public class NoticeAndStuff extends AppCompatActivity implements
     }
 
     @Override
+    public void populateOtherViews() {
+
+    }
+
+    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        Intent intent = null;
         if(item.getItemId() == R.id.news){
-            //intent = new Intent(NoticeAndStuff.this, )
+            startActivity(new Intent(NoticeAndStuff.this, News.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(NoticeAndStuff.this, Abouts.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(NoticeAndStuff.this, FeedBack.class));
+            finishAffinity();
         }else if (item.getItemId() == R.id.downloads){
             startActivity(new Intent(NoticeAndStuff.this, DownloadFiles.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.contacts){
             startActivity(new Intent(NoticeAndStuff.this, Contacts.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.resources) {
             startActivity(new Intent(NoticeAndStuff.this, Resources.class));
+            finishAffinity();
         }
+
         return true;
     }
 
@@ -375,7 +396,9 @@ public class NoticeAndStuff extends AppCompatActivity implements
         public void onClick(View view, int position);
         public void onLongClick(View view, int position);
     }
-    private void populateRecyclerView() {
+
+    @Override
+    public void populateRecyclerView() {
         listData = db.getClientList();
         progressView.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);

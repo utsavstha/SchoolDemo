@@ -44,7 +44,7 @@ public class PathsDB extends SQLiteOpenHelper {
                         + ")";
         db.execSQL(CREATE_NOTICE_TABLE);
 
-        Log.d(TAG, "Database tables created");
+       // Log.d(TAG, "Database tables created");
     }
 
     // Upgrading database
@@ -70,7 +70,7 @@ public class PathsDB extends SQLiteOpenHelper {
         long id = db.insert(TABLE_NOTICES, null, values);
         db.close(); // Closing database connection
 
-        Log.d(TAG, "New record inserted into sqlite: " + id);
+       // Log.d(TAG, "New record inserted into sqlite: " + id);
     }
 
     /**
@@ -95,7 +95,7 @@ public class PathsDB extends SQLiteOpenHelper {
         cv.put(KEY_PATH, path); //These Fields should be your String values of actual column names
         db.update(TABLE_NOTICES, cv, "fileid=" + id, null);
 
-        Log.d(TAG, "path updated for:" + id);
+        //Log.d(TAG, "path updated for:" + id);
     }
 
     public String getPath(int id) {

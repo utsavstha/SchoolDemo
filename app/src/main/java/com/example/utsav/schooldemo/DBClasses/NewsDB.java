@@ -7,36 +7,38 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.utsav.schooldemo.DataClasses.ContactsData;
+import com.example.utsav.schooldemo.DataClasses.NoticeData;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by utsav on 1/28/2016.
+ * Created by utsav on 1/30/2016.
  */
-public class ContactsDB extends SQLiteOpenHelper {
+public class NewsDB extends SQLiteOpenHelper {
 
-    private static final String TAG = NoticeDB.class.getSimpleName();
+    private static final String TAG = NewsDB.class.getSimpleName();
 
     // All Static variables
     // Database Version
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static final String DATABASE_NAME = "Contacts";
+    private static final String DATABASE_NAME = "News";
 
     // Login table name
-    private static final String TABLE_NOTICES = "Contact";
+    private static final String TABLE_NOTICES = "notices";
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
-    private static final String KEY_NAME = "title";
-    private static final String KEY_DESIGNATION = "message";
-    private static final String KEY_EMAIL = "month";
-    private static final String KEY_PHONE = "day";
+    private static final String KEY_TTTLE = "title";
+    private static final String KEY_MESSAGE = "message";
+    private static final String KEY_MONTH = "month";
+    private static final String KEY_DAY = "day";
+    private static final String KEY_YEAR = "year";
+    private static final String KEY_WEEKDAY = "weekday";
 
-    public ContactsDB(Context context) {
+    public NewsDB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -46,10 +48,12 @@ public class ContactsDB extends SQLiteOpenHelper {
         String CREATE_NOTICE_TABLE =
                 "CREATE TABLE " + TABLE_NOTICES +
                         "(" + KEY_ID + " INTEGER PRIMARY KEY,"
-                        + KEY_NAME + " TEXT,"
-                        + KEY_DESIGNATION + " TEXT,"                //in case of weird error change this data type
-                        + KEY_EMAIL + " TEXT,"
-                        + KEY_PHONE + " TEXT" + ")";
+                        + KEY_TTTLE + " TEXT,"
+                        + KEY_MESSAGE + " TEXT,"                //in case of weird error change this data type
+                        + KEY_WEEKDAY + " TEXT,"
+                        + KEY_MONTH + " TEXT,"
+                        + KEY_DAY + " TEXT,"
+                        + KEY_YEAR + " TEXT" + ")";
         db.execSQL(CREATE_NOTICE_TABLE);
 
         //Log.d(TAG, "Database tables created");
@@ -65,31 +69,31 @@ public class ContactsDB extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-
     /**
      * Storing user details in database
      * */
-    public void addContacts(String name, String designation, String email, String phone) {
+    public void addNotice(String title, String message, String weekday,String month, String day, String year) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, name);
-        values.put(KEY_DESIGNATION, designation);
-        values.put(KEY_EMAIL, email);
-        values.put(KEY_PHONE, phone);
-
+        values.put(KEY_TTTLE, title); // Title
+        values.put(KEY_MESSAGE, message); // message
+        values.put(KEY_WEEKDAY, weekday);
+        values.put(KEY_MONTH, month); // month
+        values.put(KEY_DAY, day); // day
+        values.put(KEY_YEAR, year); // year
         // Inserting Row
         long id = db.insert(TABLE_NOTICES, null, values);
         db.close(); // Closing database connection
 
-       // Log.d(TAG, "New contacts inserted into sqlite: " + id);
+        //Log.d(TAG, "New news inserted into sqlite: " + id);
     }
 
     /**
      * Getting user data from database
      * */
-    public List<ContactsData> getClientList() {
-        List<ContactsData> array_list = new ArrayList<>();
+    public List<NoticeData> getClientList() {
+        List<NoticeData> array_list = new ArrayList<>();
 
         //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -97,10 +101,12 @@ public class ContactsDB extends SQLiteOpenHelper {
         res.moveToFirst();
 
         while(res.isAfterLast() == false){
-            array_list.add(new ContactsData(res.getString(res.getColumnIndex(KEY_NAME)),
-                    res.getString(res.getColumnIndex(KEY_DESIGNATION)),
-                    res.getString(res.getColumnIndex(KEY_EMAIL)),
-                    res.getString(res.getColumnIndex(KEY_PHONE))));
+            array_list.add(new NoticeData(res.getString(res.getColumnIndex(KEY_TTTLE)),
+                    res.getString(res.getColumnIndex(KEY_MESSAGE)),
+                    res.getString(res.getColumnIndex(KEY_WEEKDAY)),
+                    res.getString(res.getColumnIndex(KEY_DAY)),
+                    res.getString(res.getColumnIndex(KEY_MONTH)),
+                    res.getString(res.getColumnIndex(KEY_YEAR))));
             res.moveToNext();
         }
         return array_list;
@@ -115,7 +121,7 @@ public class ContactsDB extends SQLiteOpenHelper {
         db.delete(TABLE_NOTICES, null, null);
         db.close();
 
-        //Log.d(TAG, "Deleted all contacts info from sqlite");
+        //Log.d(TAG, "Deleted all user info from sqlite");
     }
 
 }

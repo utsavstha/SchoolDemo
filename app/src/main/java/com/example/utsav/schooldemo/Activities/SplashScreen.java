@@ -2,26 +2,28 @@ package com.example.utsav.schooldemo.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import android.os.Handler;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.DBClasses.SQLiteHandler;
+import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,26 +33,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 import it.michelelacorte.elasticprogressbar.ElasticDownloadView;
-import it.michelelacorte.elasticprogressbar.OptionView;
 
 public class SplashScreen extends AppCompatActivity {
     int i;
-   static int count = 0;
+    static int count = 0;
     public static String TAG = SplashScreen.class.getSimpleName();
     private SQLiteHandler db;
-    ElasticDownloadView mElasticDownloadView;
+    CircularProgressView cv;
     private Handler handler = new Handler();
     private int mProgress = 0;
     SessionManager session;
     private CoordinatorLayout coordinatorLayout;
+    Button button;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        cv = (CircularProgressView) findViewById(R.id.progress);
+        cv.setIndeterminate(true);
+
         session = new SessionManager(getApplicationContext());
-        if(session.isLoggedIn()){
+        if (session.isLoggedIn()) {
             Intent intent = new Intent(SplashScreen.this, NoticeAndStuff.class);
             finishAffinity();
             startActivity(intent);
@@ -61,15 +64,17 @@ public class SplashScreen extends AppCompatActivity {
         db = new SQLiteHandler(getApplicationContext());
         try {
             db.deleteClients();
-        }catch (Exception e){
-            Log.d(TAG,e.toString());
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
         }
-        mElasticDownloadView = (ElasticDownloadView)findViewById(R.id.elastic_download_view);
-        mElasticDownloadView.startIntro();
-        OptionView.noBackground = true;
-        if(!session.isLoggedIn())
+      cv.startAnimation();
+       // OptionView.noBackground = true;
+        if (!session.isLoggedIn())
             startProgress();
         //downloadData();
+
+
+
 
     }
 
@@ -100,34 +105,29 @@ public class SplashScreen extends AppCompatActivity {
                                 final int length = client.length();
 
                                 for (i = 0; i < length; i++) {
-                                    String name = client.getString(i);
-                                    db.addClient(name);
+                                    JSONObject id = client.getJSONObject(i);
+                                    String name = id.getString("org_name");
+                                    String url = id.getString("icon");
 
-                                    handler.post(new Runnable() {
-                                        public void run() {
-                                            mProgress = (i*100) / length;
-                                            //Set progress dynamically
-                                            mElasticDownloadView.setProgress(mProgress);
-                                            Log.d("Progress:", "" + mElasticDownloadView.getProgress());
-                                            if (i >= length-1) {
-                                                mElasticDownloadView.setProgress(100);
-                                                mElasticDownloadView.success();
-                                                Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                                                finishAffinity();
-                                                startActivity(intent);
-                                            }
+                                    Boolean pass = id.getBoolean("passkey");
+                                    String cid = id.getString("cid");
+                                    //session.setLogin(false, cid);
+                                    String passString = pass.toString();
+                                    db.addClient(name, url, passString, cid);
+                                    //session.setKeyPassword(pass);
 
-                                        }
-                                    });
+                                    Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                                    finishAffinity();
+                                    startActivity(intent);
 
                                 }
 
                             } else {
                                 // Error in login. Get the error message
                                 String errorMsg = jObj.getString("error_msg");
-                                Toast.makeText(getApplicationContext(),
-                                        errorMsg, Toast.LENGTH_LONG).show();
+                               /* Toast.makeText(getApplicationContext(),
+                                        errorMsg, Toast.LENGTH_LONG).show();*/
                             }
                         } catch (JSONException e) {
                             // JSON error
@@ -160,11 +160,11 @@ public class SplashScreen extends AppCompatActivity {
                 AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
 
-               // while (mProgress < 100) {
-                    // progressStatus = downloadFile();
+                // while (mProgress < 100) {
+                // progressStatus = downloadFile();
 
-                   // mProgress++;
-           //     }
+                // mProgress++;
+                //     }
 
             }
         }, 1000);
@@ -191,16 +191,13 @@ public class SplashScreen extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
     @Override
-    public void onBackPressed()
-    {
-        if(count == 1)
-        {
-            count=0;
+    public void onBackPressed() {
+        if (count == 1) {
+            count = 0;
             finish();
-        }
-        else
-        {
+        } else {
             Toast.makeText(getApplicationContext(), "Press Back again to quit.", Toast.LENGTH_SHORT).show();
             count++;
         }

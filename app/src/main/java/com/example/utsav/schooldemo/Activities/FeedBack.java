@@ -21,11 +21,11 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.DBClasses.DownloadsDB;
 import com.example.utsav.schooldemo.DBClasses.NoticeDB;
 import com.example.utsav.schooldemo.DBClasses.PathsDB;
 import com.example.utsav.schooldemo.DBClasses.SubsDB;
+import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
@@ -46,9 +46,6 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
     TextView subject, message,name;
     SessionManager sessionManager;
     NoticeDB db;
-    SubsDB subsDB;
-    PathsDB pathsDB;
-    DownloadsDB downloadsDB;
     Button send;
     int count = 0;
     private CoordinatorLayout coordinatorLayout;
@@ -100,7 +97,7 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
 
                                 @Override
                                 public void onResponse(String response) {
-                                    Log.d(TAG, "Response: " + response.toString());
+                                    //Log.d(TAG, "Response: " + response.toString());
                                     //hideDialog();
 
                                     try {
@@ -135,7 +132,7 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
 
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    Log.e(TAG, "Login Error: " + error.getMessage());
+                                   // Log.e(TAG, "Login Error: " + error.getMessage());
                                     HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                                     // hideDialog();
                                 }
@@ -174,17 +171,23 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
     public boolean onNavigationItemSelected(MenuItem item) {
         Intent intent = null;
         if(item.getItemId() == R.id.news){
-            //intent = new Intent(NoticeAndStuff.this, )
+            startActivity(new Intent(FeedBack.this, News.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.notice_board){
             startActivity(new Intent(FeedBack.this, NoticeAndStuff.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(FeedBack.this, Abouts.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.downloads){
             startActivity(new Intent(FeedBack.this, DownloadFiles.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.contacts){
             startActivity(new Intent(FeedBack.this, Contacts.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.resources) {
             startActivity(new Intent(FeedBack.this, Resources.class));
+            finishAffinity();
         }
         return true;
     }
@@ -192,7 +195,7 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
     @Override
     public void onBackPressed()
     {
-        finish();
+        finishAffinity();
         startActivity(new Intent(FeedBack.this, NoticeAndStuff.class));
     }
     @Override

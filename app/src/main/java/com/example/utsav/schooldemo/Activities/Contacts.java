@@ -1,20 +1,17 @@
 package com.example.utsav.schooldemo.Activities;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,10 +21,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -36,7 +30,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.utsav.schooldemo.DBClasses.ContactsDB;
 import com.example.utsav.schooldemo.DataClasses.ContactsData;
-import com.example.utsav.schooldemo.DataClasses.NoticeData;
 import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.Utils.RVAdapterContacts;
@@ -44,6 +37,7 @@ import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.Logout;
+import com.example.utsav.schooldemo.app.PopulateViews;
 import com.example.utsav.schooldemo.app.SessionManager;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
@@ -57,7 +51,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Contacts extends AppCompatActivity implements
-        NavigationView.OnNavigationItemSelectedListener{
+        NavigationView.OnNavigationItemSelectedListener, PopulateViews{
 
     public static String TAG = Contacts.class.getSimpleName();
     SessionManager sessionManager;
@@ -102,7 +96,7 @@ public class Contacts extends AppCompatActivity implements
             progressView.setVisibility(View.VISIBLE);
             progressView.startAnimation();
             recyclerView.setVisibility(View.GONE);
-            sessionManager.setKeyContacts(false);
+
         }else{
             populateRecyclerView();
         }
@@ -160,7 +154,8 @@ public class Contacts extends AppCompatActivity implements
         );
     }
 
-    private void populateRecyclerView() {
+    @Override
+    public void populateRecyclerView() {
         listData = contactsDB.getClientList();
         progressView.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
@@ -173,6 +168,17 @@ public class Contacts extends AppCompatActivity implements
             swipeRefreshLayout.setRefreshing(false);
         }
     }
+
+    @Override
+    public void populateImageViews() {
+
+    }
+
+    @Override
+    public void populateOtherViews() {
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -190,12 +196,13 @@ public class Contacts extends AppCompatActivity implements
 
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "Login Response: " + response.toString());
+                       // Log.d(TAG, "Login Response: " + response.toString());
                         //hideDialog();
 
                         try {
                             JSONObject jObj = new JSONObject(response);
                             boolean error = jObj.getBoolean("error");
+                            int count = jObj.getInt("count");
 
                             // Check for error node in json
                             if (!error) {
@@ -216,6 +223,7 @@ public class Contacts extends AppCompatActivity implements
                                     contactsDB.addContacts(name, designation, email, phone);
 
                                 }
+                                sessionManager.setKeyContacts(false);
                                 populateRecyclerView();
 
                             } else {
@@ -228,6 +236,10 @@ public class Contacts extends AppCompatActivity implements
                                 Toast.makeText(getApplicationContext(),
                                         errorMsg, Toast.LENGTH_LONG).show();
                             }
+                            if(count == 0){
+                                Snackbar.make(coordinatorLayout, " No data to be displayed...", Snackbar.LENGTH_LONG).show();
+                                sessionManager.setKeyContacts(true);
+                            }
                         } catch (JSONException e) {
                             // JSON error
                             e.printStackTrace();
@@ -239,7 +251,7 @@ public class Contacts extends AppCompatActivity implements
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "Login Error: " + error.getMessage());
+                        //Log.e(TAG, "Login Error: " + error.getMessage());
                         HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                     }
                 }) {
@@ -268,17 +280,23 @@ public class Contacts extends AppCompatActivity implements
     public boolean onNavigationItemSelected(MenuItem item) {
         Intent intent = null;
         if(item.getItemId() == R.id.news){
-            //intent = new Intent(NoticeAndStuff.this, )
+            startActivity(new Intent(Contacts.this, News.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(Contacts.this, Abouts.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(Contacts.this, FeedBack.class));
+            finishAffinity();
         }else if (item.getItemId() == R.id.downloads){
             startActivity(new Intent(Contacts.this, DownloadFiles.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.notice_board){
-            startActivity(new Intent(Contacts.this, DownloadFiles.class));
+            startActivity(new Intent(Contacts.this, NoticeAndStuff.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.resources) {
             startActivity(new Intent(Contacts.this, Resources.class));
+            finishAffinity();
         }
 
         return true;
@@ -305,7 +323,7 @@ public class Contacts extends AppCompatActivity implements
     @Override
     public void onBackPressed()
     {
-        finish();
+        finishAffinity();
         startActivity(new Intent(Contacts.this, NoticeAndStuff.class));
     }
 }

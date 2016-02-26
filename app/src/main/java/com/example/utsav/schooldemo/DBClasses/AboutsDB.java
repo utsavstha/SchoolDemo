@@ -7,15 +7,17 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.utsav.schooldemo.DataClasses.AboutsData;
 import com.example.utsav.schooldemo.DataClasses.ContactsData;
+import com.example.utsav.schooldemo.app.Database;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by utsav on 1/28/2016.
+ * Created by utsav on 2/16/2016.
  */
-public class ContactsDB extends SQLiteOpenHelper {
+public class AboutsDB extends SQLiteOpenHelper {
 
     private static final String TAG = NoticeDB.class.getSimpleName();
 
@@ -24,19 +26,22 @@ public class ContactsDB extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static final String DATABASE_NAME = "Contacts";
+    private static final String DATABASE_NAME = "Abouts";
 
     // Login table name
-    private static final String TABLE_NOTICES = "Contact";
+    private static final String TABLE_NOTICES = "about";
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
     private static final String KEY_NAME = "title";
-    private static final String KEY_DESIGNATION = "message";
     private static final String KEY_EMAIL = "month";
-    private static final String KEY_PHONE = "day";
+    private static final String KEY_CONTACTS = "contacts";
+    private static final String KEY_ABOUTS = "abouts";
+    private static final String KEY_WEBSITE = "website";
+    private static final String KEY_LONGITUDE = "longitude";
+    private static final String KEY_LATITUDE = "latitude";
 
-    public ContactsDB(Context context) {
+    public AboutsDB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -47,12 +52,15 @@ public class ContactsDB extends SQLiteOpenHelper {
                 "CREATE TABLE " + TABLE_NOTICES +
                         "(" + KEY_ID + " INTEGER PRIMARY KEY,"
                         + KEY_NAME + " TEXT,"
-                        + KEY_DESIGNATION + " TEXT,"                //in case of weird error change this data type
-                        + KEY_EMAIL + " TEXT,"
-                        + KEY_PHONE + " TEXT" + ")";
+                        + KEY_EMAIL + " TEXT,"                //in case of weird error change this data type
+                        + KEY_CONTACTS + " TEXT,"
+                        + KEY_ABOUTS + " TEXT,"
+                        + KEY_WEBSITE + " TEXT,"
+                        + KEY_LONGITUDE + " TEXT,"
+                        + KEY_LATITUDE + " TEXT" + ")";
         db.execSQL(CREATE_NOTICE_TABLE);
 
-        //Log.d(TAG, "Database tables created");
+       // Log.d(TAG, "Database tables created");
     }
 
     // Upgrading database
@@ -69,14 +77,19 @@ public class ContactsDB extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      * */
-    public void addContacts(String name, String designation, String email, String phone) {
+    public void addData(String name, String email, String contacts,
+                            String abouts, String website, String longitude,
+                            String latitude) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, name);
-        values.put(KEY_DESIGNATION, designation);
         values.put(KEY_EMAIL, email);
-        values.put(KEY_PHONE, phone);
+        values.put(KEY_CONTACTS, contacts);
+        values.put(KEY_ABOUTS, abouts);
+        values.put(KEY_WEBSITE, website);
+        values.put(KEY_LONGITUDE, longitude);
+        values.put(KEY_LATITUDE, latitude);
 
         // Inserting Row
         long id = db.insert(TABLE_NOTICES, null, values);
@@ -88,8 +101,8 @@ public class ContactsDB extends SQLiteOpenHelper {
     /**
      * Getting user data from database
      * */
-    public List<ContactsData> getClientList() {
-        List<ContactsData> array_list = new ArrayList<>();
+    public List<AboutsData> getClientList() {
+        List<AboutsData> array_list = new ArrayList<>();
 
         //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -97,10 +110,13 @@ public class ContactsDB extends SQLiteOpenHelper {
         res.moveToFirst();
 
         while(res.isAfterLast() == false){
-            array_list.add(new ContactsData(res.getString(res.getColumnIndex(KEY_NAME)),
-                    res.getString(res.getColumnIndex(KEY_DESIGNATION)),
+            array_list.add(new AboutsData(res.getString(res.getColumnIndex(KEY_NAME)),
                     res.getString(res.getColumnIndex(KEY_EMAIL)),
-                    res.getString(res.getColumnIndex(KEY_PHONE))));
+                    res.getString(res.getColumnIndex(KEY_CONTACTS)),
+                    res.getString(res.getColumnIndex(KEY_ABOUTS)),
+                    res.getString(res.getColumnIndex(KEY_WEBSITE)),
+                    res.getString(res.getColumnIndex(KEY_LONGITUDE)),
+                    res.getString(res.getColumnIndex(KEY_LATITUDE))));
             res.moveToNext();
         }
         return array_list;
@@ -115,7 +131,7 @@ public class ContactsDB extends SQLiteOpenHelper {
         db.delete(TABLE_NOTICES, null, null);
         db.close();
 
-        //Log.d(TAG, "Deleted all contacts info from sqlite");
+       // Log.d(TAG, "Deleted all contacts info from sqlite");
     }
 
 }

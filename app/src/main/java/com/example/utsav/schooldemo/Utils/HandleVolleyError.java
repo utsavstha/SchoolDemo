@@ -1,9 +1,7 @@
 package com.example.utsav.schooldemo.Utils;
 
-import android.content.Context;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.view.View;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;

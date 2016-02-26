@@ -12,7 +12,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="30dp">
+        android:layout_marginBottom="60dp"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/title_details"
@@ -31,31 +32,28 @@
         <ScrollView
             android:id="@+id/scroller_id"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_below="@+id/date_details"
             android:fillViewport="true"
             android:scrollbars="vertical">
 
             <org.sufficientlysecure.htmltextview.HtmlTextView
                 android:id="@+id/message_details"
-                android:textSize="20sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:scrollHorizontally="true"
-                android:text="This is a dummy message" />
+                android:text="This is a dummy message"
+                android:textSize="20sp" />
         </ScrollView>
-
 
 
     </RelativeLayout>
     <SeekBar
-        android:layout_marginBottom="120dp"
         android:id="@+id/seekBar1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="26dp"
         android:max="10" />
+
 </RelativeLayout>

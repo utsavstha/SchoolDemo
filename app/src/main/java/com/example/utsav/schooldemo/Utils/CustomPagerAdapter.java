@@ -5,7 +5,6 @@ import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -53,8 +52,7 @@ public class CustomPagerAdapter extends PagerAdapter {
         //Image URL - This can point to any image file supported by Android
         final String url = imageList.get(position);
         mImageLoader.get(url, ImageLoader.getImageListener(mNetworkImageView,
-                android.R.drawable.arrow_down_float, android.R.drawable
-                        .ic_dialog_alert));
+                R.drawable.bg,R.drawable.bg));
         mNetworkImageView.setImageUrl(url, mImageLoader);
 
         /*ImageView imageView = (ImageView) itemView.findViewById(R.id.img_pager_item);

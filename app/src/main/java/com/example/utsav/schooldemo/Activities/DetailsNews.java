@@ -16,19 +16,23 @@ import com.example.utsav.schooldemo.R;
 
 import org.sufficientlysecure.htmltextview.HtmlTextView;
 
-public class Details extends AppCompatActivity {
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+public class DetailsNews extends AppCompatActivity {
 
     TextView title;
     TextView date;
     HtmlTextView message;
-    String weekday[] = {"Sunday", "Monday", "Tuesday", "Wednesday",
-            "Thursday", "Friday", "Saturday"};
     //final static float STEP = 200;
     float mRatio = 1.0f;
-   // int mBaseDist;
-   // float mBaseRatio;
+    // int mBaseDist;
+    // float mBaseRatio;
     float fontsize = 18;
-   // float titleSize = 30;
+    // float titleSize = 30;
     SeekBar seekBar;
     FloatingActionButton fab;
 
@@ -43,10 +47,11 @@ public class Details extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Details.this, NoticeAndStuff.class));
-                finish();
+                startActivity(new Intent(DetailsNews.this, News.class));
+                finishAffinity();
             }
         });
+
         fab = (FloatingActionButton) findViewById(R.id.fab_details);
         title = (TextView) findViewById(R.id.title_details);
         date = (TextView) findViewById(R.id.date_details);
@@ -65,16 +70,16 @@ public class Details extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                new AlertDialog.Builder(Details.this)
+                new AlertDialog.Builder(DetailsNews.this)
                         .setTitle("Share With")
-                        .setMessage("All Shared contents will be sourced from nLiveRary")
+                        .setMessage("All Shared contents will be sourced from School Demo")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent intent = new Intent(Intent.ACTION_SEND);
                                 intent.setType("text/plain");
                                 String shareText = "Title: " + getIntent().getStringExtra("title") + "\n\n Date: " + getIntent().getStringExtra("date")
                                         + "\n\nMessage: " + getIntent().getStringExtra("message") +
-                                        "\n\nsource: nLiveRary";
+                                        "\n\nsource: SchoolDemo";
                                 intent.putExtra(Intent.EXTRA_TEXT, shareText);
                                 startActivity(Intent.createChooser(intent, "Share With"));
                             }
@@ -116,7 +121,7 @@ public class Details extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(Details.this, NoticeAndStuff.class));
+        startActivity(new Intent(DetailsNews.this, News.class));
         finishAffinity();
     }
 

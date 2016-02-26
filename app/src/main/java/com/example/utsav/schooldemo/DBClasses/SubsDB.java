@@ -44,7 +44,7 @@ public class SubsDB extends SQLiteOpenHelper {
                         + KEY_TTTLE + " TEXT"+ ")";
         db.execSQL(CREATE_NOTICE_TABLE);
 
-        Log.d(TAG, "Database tables created");
+       // Log.d(TAG, "Database tables created");
     }
 
     // Upgrading database
@@ -69,7 +69,7 @@ public class SubsDB extends SQLiteOpenHelper {
         long id = db.insert(TABLE_SUBSCRIPTIONS, null, values);
         db.close(); // Closing database connection
 
-        Log.d(TAG, "New subs inserted into sqlite: " + id);
+        //Log.d(TAG, "New subs inserted into sqlite: " + id);
     }
     public void deleteSubs(String title){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -112,7 +112,7 @@ public class SubsDB extends SQLiteOpenHelper {
         db.delete(TABLE_SUBSCRIPTIONS, null, null);
         db.close();
 
-        Log.d(TAG, "Deleted all user info from sqlite");
+        //Log.d(TAG, "Deleted all user info from sqlite");
     }
 
 }

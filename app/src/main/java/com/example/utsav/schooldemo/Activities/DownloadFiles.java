@@ -1,6 +1,7 @@
 package com.example.utsav.schooldemo.Activities;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -30,18 +31,19 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.utsav.schooldemo.DataClasses.DownloadData;
-import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.DBClasses.DownloadsDB;
 import com.example.utsav.schooldemo.DBClasses.NoticeDB;
 import com.example.utsav.schooldemo.DBClasses.PathsDB;
+import com.example.utsav.schooldemo.DBClasses.SubsDB;
+import com.example.utsav.schooldemo.DataClasses.DownloadData;
+import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.Utils.RVAdapterDownloads;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
-import com.example.utsav.schooldemo.DBClasses.SubsDB;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.Logout;
+import com.example.utsav.schooldemo.app.PopulateViews;
 import com.example.utsav.schooldemo.app.SessionManager;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
@@ -60,10 +62,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import android.app.ProgressDialog;
 public class DownloadFiles extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        SwipeRefreshLayout.OnRefreshListener{
+        SwipeRefreshLayout.OnRefreshListener, PopulateViews{
     public static String TAG = DownloadFiles.class.getSimpleName();
     private RecyclerView recyclerView;  //recycler view variable
     CircularProgressView progressView;
@@ -123,7 +124,7 @@ public class DownloadFiles extends AppCompatActivity implements
             progressView.setVisibility(View.VISIBLE);
             progressView.startAnimation();
             recyclerView.setVisibility(View.GONE);
-            sessionManager.setKeyDownloads(false);
+
         }else{
             populateRecyclerView();
         }
@@ -144,7 +145,7 @@ public class DownloadFiles extends AppCompatActivity implements
                             progress.setIndeterminate(false);
                             progress.setProgress(0);
                             progress.show();
-                            Log.d(TAG, "file download started");
+                            //Log.d(TAG, "file download started");
                             new Thread(new Runnable() {
                                 public void run() {
 
@@ -186,7 +187,11 @@ public class DownloadFiles extends AppCompatActivity implements
                         try {
                             JSONObject jObj = new JSONObject(response);
                             boolean error = jObj.getBoolean("error");
-                            Log.d(TAG,"Response: "+response);
+                            //Log.d(TAG,"Response: "+response);
+                            int count = jObj.getInt("count");
+                            if(count == 0){
+                                Snackbar.make(coordinatorLayout, " No data to be displayed...", Snackbar.LENGTH_LONG).show();
+                            }
                             // Check for error node in json
                             if (!error) {
                                 // data successfully fetched
@@ -208,6 +213,7 @@ public class DownloadFiles extends AppCompatActivity implements
                                     pathsDB.addPath(id, "xxx");
                                     downloadsDB.addDownloadList(id, title, link, size, "xxx", day, month, year);
                                 }
+                                sessionManager.setKeyDownloads(false);
                                 populateRecyclerView();
                             } else {
                                 // Error in login. Get the error message
@@ -272,17 +278,23 @@ public class DownloadFiles extends AppCompatActivity implements
     public boolean onNavigationItemSelected(MenuItem item) {
         Intent intent = null;
         if(item.getItemId() == R.id.news){
-            //intent = new Intent(NoticeAndStuff.this, )
+            startActivity(new Intent(DownloadFiles.this, News.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(DownloadFiles.this, Abouts.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(DownloadFiles.this, FeedBack.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.notice_board){
             startActivity(new Intent(DownloadFiles.this, NoticeAndStuff.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.contacts){
             startActivity(new Intent(DownloadFiles.this, Contacts.class));
+            finishAffinity();
         }else if(item.getItemId() == R.id.resources) {
             startActivity(new Intent(DownloadFiles.this, Resources.class));
+            finishAffinity();
         }
 
         return true;
@@ -322,7 +334,8 @@ public class DownloadFiles extends AppCompatActivity implements
         menuInflater.inflate(R.menu.menu_notice_and_stuff, menu);
         return super.onCreateOptionsMenu(menu);
     }
-    private void populateRecyclerView() {
+    @Override
+    public void populateRecyclerView() {
         listData.clear();
         listData = downloadsDB.getDownloadList();
         progressView.setVisibility(View.GONE);
@@ -336,6 +349,16 @@ public class DownloadFiles extends AppCompatActivity implements
         if(swipeRefreshLayout.isRefreshing()){
             swipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    @Override
+    public void populateImageViews() {
+
+    }
+
+    @Override
+    public void populateOtherViews() {
+
     }
 
     void downloadFile(final String dwnload_file_path,final int id){
@@ -432,7 +455,7 @@ public class DownloadFiles extends AppCompatActivity implements
     @Override
     public void onBackPressed()
     {
-        finish();
+        finishAffinity();
         startActivity(new Intent(DownloadFiles.this, NoticeAndStuff.class));
     }
 

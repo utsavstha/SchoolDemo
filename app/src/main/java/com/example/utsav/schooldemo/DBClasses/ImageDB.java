@@ -48,7 +48,7 @@ public class ImageDB  extends SQLiteOpenHelper {
                         + ")";
         db.execSQL(CREATE_NOTICE_TABLE);
 
-        Log.d(TAG, "Database tables created");
+       // Log.d(TAG, "Database tables created");
     }
 
     // Upgrading database
@@ -73,7 +73,7 @@ public class ImageDB  extends SQLiteOpenHelper {
         long id = db.insert(TABLE_NOTICES, null, values);
         db.close(); // Closing database connection
 
-        Log.d(TAG, "New record inserted into sqlite: " + id);
+       // Log.d(TAG, "New record inserted into sqlite: " + id);
     }
 
     /**
@@ -106,6 +106,6 @@ public class ImageDB  extends SQLiteOpenHelper {
         db.delete(TABLE_NOTICES, null, null);
         db.close();
 
-        Log.d(TAG, "Deleted all user info from sqlite");
+        //Log.d(TAG, "Deleted all user info from sqlite");
     }
 }

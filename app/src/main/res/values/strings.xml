@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">SchoolDemo</string>
+    <string name="app_name">nLiveRary</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">nLiveRary</string>
     <string name="password_hint">Password</string>
     <string name="button_login_text">Login</string>
     <string name="title_activity_notice_and_stuff">Notice Board</string>
@@ -10,7 +10,7 @@
     <string name="Logout">Log out</string>
     <string name="title_activity_subscriptions">Subscriptions</string>
     <string name="Subs">Subscriptions</string>
-    <string name="title_activity_details">Details</string>
+    <string name="title_activity_details">Notice Details</string>
     <string name="title_activity_abouts">Abouts</string>
     <string name="title_activity_feed_back">FeedBack</string>
     <string name="send">Send</string>
@@ -23,4 +23,8 @@
     <string name="error_auth_failure">Unrecognized user</string>
     <string name="error_network">Server Just Messed Up</string>
     <string name="error_parser">Unparsable Data</string>
+    <string name="title_activity_subscription_news">Subscriptions</string>
+    <string name="title_activity_details_news">News Details</string>
+    <string name="list_message">Please choose the institution you\'re involved with or interested in receiving notices for.</string>
+    <string name="notice_for_list">Note: You may need to enter the a password provided by the institution.</string>
 </resources>

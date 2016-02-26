@@ -7,15 +7,21 @@ public class NoticeData {
     private String title;
     private String message;
     private String day;
+    private String weekday;
     private String month;
     private String year;
 
-    public NoticeData(String title, String message, String day, String month, String year) {
+    public NoticeData(String title, String message, String weekday ,String day, String month, String year) {
         this.title = title;
         this.message = message;
         this.day = day;
         this.month = month;
+        this.weekday = weekday;
         this.year = year;
+    }
+
+    public String getWeekday() {
+        return weekday;
     }
 
     public void setTitle(String title) {
