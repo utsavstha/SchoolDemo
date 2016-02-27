@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.example.utsav.schooldemo.DataClasses.NewsData;
 import com.example.utsav.schooldemo.DataClasses.NoticeData;
 
 import java.util.ArrayList;
@@ -31,12 +32,15 @@ public class NewsDB extends SQLiteOpenHelper {
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
+    private static final String KEY_NEWSID = "newsid";
     private static final String KEY_TTTLE = "title";
     private static final String KEY_MESSAGE = "message";
     private static final String KEY_MONTH = "month";
     private static final String KEY_DAY = "day";
     private static final String KEY_YEAR = "year";
     private static final String KEY_WEEKDAY = "weekday";
+    private static final String KEY_URL = "url";
+    private static final String KEY_PATH = "path";
 
     public NewsDB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -48,12 +52,16 @@ public class NewsDB extends SQLiteOpenHelper {
         String CREATE_NOTICE_TABLE =
                 "CREATE TABLE " + TABLE_NOTICES +
                         "(" + KEY_ID + " INTEGER PRIMARY KEY,"
+                        + KEY_NEWSID + " TEXT,"
                         + KEY_TTTLE + " TEXT,"
                         + KEY_MESSAGE + " TEXT,"                //in case of weird error change this data type
                         + KEY_WEEKDAY + " TEXT,"
                         + KEY_MONTH + " TEXT,"
                         + KEY_DAY + " TEXT,"
-                        + KEY_YEAR + " TEXT" + ")";
+                        + KEY_YEAR + " TEXT,"
+                        + KEY_URL + " TEXT,"
+                        + KEY_PATH + " TEXT"
+                        + ")";
         db.execSQL(CREATE_NOTICE_TABLE);
 
         //Log.d(TAG, "Database tables created");
@@ -72,16 +80,20 @@ public class NewsDB extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      * */
-    public void addNotice(String title, String message, String weekday,String month, String day, String year) {
+    public void addNotice(String newsID, String title, String message, String weekday,
+                          String month, String day, String year, String url, String path) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(KEY_NEWSID, newsID);
         values.put(KEY_TTTLE, title); // Title
         values.put(KEY_MESSAGE, message); // message
         values.put(KEY_WEEKDAY, weekday);
         values.put(KEY_MONTH, month); // month
         values.put(KEY_DAY, day); // day
         values.put(KEY_YEAR, year); // year
+        values.put(KEY_URL, url);
+        values.put(KEY_PATH, path);
         // Inserting Row
         long id = db.insert(TABLE_NOTICES, null, values);
         db.close(); // Closing database connection
@@ -92,28 +104,31 @@ public class NewsDB extends SQLiteOpenHelper {
     /**
      * Getting user data from database
      * */
-    public List<NoticeData> getClientList() {
-        List<NoticeData> array_list = new ArrayList<>();
+    public List<NewsData> getClientList() {
+        List<NewsData> array_list = new ArrayList<>();
 
         //hp = new HashMap();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery( "select * from "+TABLE_NOTICES, null );
+        Cursor res =  db.rawQuery("select * from " + TABLE_NOTICES, null);
         res.moveToFirst();
 
         while(res.isAfterLast() == false){
-            array_list.add(new NoticeData(res.getString(res.getColumnIndex(KEY_TTTLE)),
+            array_list.add(new NewsData(res.getString(res.getColumnIndex(KEY_NEWSID))
+                    ,res.getString(res.getColumnIndex(KEY_TTTLE)),
                     res.getString(res.getColumnIndex(KEY_MESSAGE)),
-                    res.getString(res.getColumnIndex(KEY_WEEKDAY)),
                     res.getString(res.getColumnIndex(KEY_DAY)),
+                    res.getString(res.getColumnIndex(KEY_WEEKDAY)),
                     res.getString(res.getColumnIndex(KEY_MONTH)),
-                    res.getString(res.getColumnIndex(KEY_YEAR))));
+                    res.getString(res.getColumnIndex(KEY_YEAR)),
+                    res.getString(res.getColumnIndex(KEY_URL)),
+                    res.getString(res.getColumnIndex(KEY_PATH))));
             res.moveToNext();
         }
         return array_list;
     }
 
     /**
-     * Re crate database Delete all tables and create them again
+     * Re create database Delete all tables and create them again
      * */
     public void deleteClients() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -122,6 +137,15 @@ public class NewsDB extends SQLiteOpenHelper {
         db.close();
 
         //Log.d(TAG, "Deleted all user info from sqlite");
+    }
+
+    public void updatePath(String path, int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(KEY_PATH, path); //These Fields should be your String values of actual column names
+        db.update(TABLE_NOTICES, cv, "newsid=" + id, null);
+
+        //Log.d(TAG, "path updated for:" + id);
     }
 
 }

@@ -65,7 +65,7 @@ public class SplashScreen extends AppCompatActivity {
         try {
             db.deleteClients();
         } catch (Exception e) {
-            Log.d(TAG, e.toString());
+            //Log.d(TAG, e.toString());
         }
       cv.startAnimation();
        // OptionView.noBackground = true;
@@ -88,7 +88,7 @@ public class SplashScreen extends AppCompatActivity {
 
                     @Override
                     public void onResponse(String response) {
-                        Log.d(TAG, "Login Response: " + response.toString());
+                        //Log.d(TAG, "Login Response: " + response.toString());
                         //hideDialog();
 
                         try {
@@ -116,12 +116,11 @@ public class SplashScreen extends AppCompatActivity {
                                     db.addClient(name, url, passString, cid);
                                     //session.setKeyPassword(pass);
 
-                                    Intent intent = new Intent(SplashScreen.this, MainActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                                    finishAffinity();
-                                    startActivity(intent);
-
                                 }
+                                Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                                //intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                                finishAffinity();
+                                startActivity(intent);
 
                             } else {
                                 // Error in login. Get the error message
@@ -140,7 +139,7 @@ public class SplashScreen extends AppCompatActivity {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.e(TAG, "Login Error: " + error.getMessage());
+                      //  Log.e(TAG, "Login Error: " + error.getMessage());
                         HandleVolleyError volleyError = new HandleVolleyError(error, coordinatorLayout);
                     }
                 }) {

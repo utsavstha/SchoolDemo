@@ -4,14 +4,14 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <!--  <com.android.volley.toolbox.NetworkImageView
+      <com.android.volley.toolbox.NetworkImageView
           android:layout_marginStart="16dp"
           android:layout_gravity="top"
           android:id="@+id/client_image"
           android:src="@drawable/about"
           android:layout_width="wrap_content"
-          android:layout_height="56dp"/>-->
-    <com.example.utsav.schooldemo.Utils.CircularNetworkImageView
+          android:layout_height="56dp"/>
+   <!-- <com.example.utsav.schooldemo.Utils.CircularNetworkImageView
         android:id="@+id/client_image"
         android:layout_marginTop="8dp"
         android:layout_width="wrap_content"
@@ -19,7 +19,7 @@
         android:minHeight="40dp"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
-        android:src="@drawable/about" />
+        android:src="@drawable/about" />-->
     <!-- <ImageView
          android:id="@+id/client_image"
          android:src="@drawable/about"

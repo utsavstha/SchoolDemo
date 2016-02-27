@@ -376,7 +376,7 @@ public class DownloadFiles extends AppCompatActivity implements
             //set the path where we want to save the file
             File SDCardRoot = Environment.getExternalStorageDirectory();
             //create a new file, to save the downloaded file
-            final File directory = new File(SDCardRoot, "/schoolDemo/");
+            final File directory = new File(SDCardRoot, "/bulletin/");
             if (!directory.exists())
             {
                 directory.mkdir();

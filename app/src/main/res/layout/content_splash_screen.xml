@@ -40,4 +40,13 @@
             app:cpv_indeterminate="true" />
     </FrameLayout>
 
+    <TextView
+        android:gravity="center"
+        android:text="Version 0.7.1(Alpha)"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="40dp" />
+
 </RelativeLayout>

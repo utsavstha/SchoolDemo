@@ -9,6 +9,12 @@ public class ClientsData {
     private String pass;
     private String cid;
 
+    public ClientsData(String name, String url, String cid, String pass) {
+        this.name = name;
+        this.url = url;
+        this.pass = pass;
+        this.cid = cid;
+    }
     public String getName() {
         return name;
     }
@@ -19,13 +25,6 @@ public class ClientsData {
 
     public String getPass() {
         return pass;
-    }
-
-    public ClientsData(String name, String url, String cid, String pass) {
-        this.name = name;
-        this.url = url;
-        this.pass = pass;
-        this.cid = cid;
     }
 
     public String getCid() {

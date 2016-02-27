@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.example.utsav.schooldemo.DBClasses.SQLiteHandler;
 import com.example.utsav.schooldemo.DataClasses.ClientsData;
 import com.example.utsav.schooldemo.R;
@@ -68,17 +70,23 @@ public class MainActivity extends AppCompatActivity {
                     convertView = LayoutInflater.from(parent.getContext())
                             .inflate(R.layout.client_rv_list_adapter, parent, false);
                 }
-                CircularNetworkImageView icon = (CircularNetworkImageView) convertView.findViewById(R.id.client_image);
+                NetworkImageView icon = (NetworkImageView) convertView.findViewById(R.id.client_image);
+                //CircularNetworkImageView icon = (CircularNetworkImageView) convertView.findViewById(R.id.client_image);
                 TextView tv = (TextView) convertView.findViewById(R.id.client_tv);
                 tv.setTextSize(16);
+
                 mImageLoader = CustomVolleyRequestQueue.getInstance(getApplicationContext())
                         .getImageLoader();
                 tv.setText(listData.get(position).getName());
+
                 tv.setTypeface(null, Typeface.BOLD);
-                mImageLoader.get(listData.get(position).getUrl(), ImageLoader.getImageListener(icon,
+
+                mImageLoader.get("", ImageLoader.getImageListener(icon,
                         android.R.drawable.arrow_down_float, android.R.drawable
                                 .ic_dialog_alert));
+
                 icon.setImageUrl(listData.get(position).getUrl(), mImageLoader);
+               // Log.d(TAG,listData.get(position).getName()+ " and "+ position + " and "+ listData.get(0).getUrl());
                 return convertView;
             }
         });

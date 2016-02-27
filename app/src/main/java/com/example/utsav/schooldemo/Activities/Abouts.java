@@ -23,6 +23,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +51,7 @@ import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sufficientlysecure.htmltextview.HtmlTextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +64,8 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
     private NavigationView mDrawer;   //object to initialise navigation view
     private DrawerLayout mDrawerLayout; //object that holds id to drawer layout
     private ActionBarDrawerToggle mDrawerToggle;
-    TextView name,email, contact, about, website;
+    TextView name,email, contact, website;
+    HtmlTextView about;
     NoticeDB db;
     PathsDB pathsDB;
     SubsDB subsDB;
@@ -76,8 +81,10 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
     int count = 0;
     String longitude = "";
     String latitude = "";
+    ScrollView scrollView;
     String pinName = "";
     SessionManager sessionManager;
+    LinearLayout linearLayout;
     SwipeRefreshLayout swipeRefreshLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,10 +96,14 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         mDrawer = (NavigationView) findViewById(R.id.main_drawer_aboouts);//initialising navigation view
         mDrawer.setNavigationItemSelectedListener(this);           //tells this activity will handle click events
         toolbar.showOverflowMenu();
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_to_refresh_abouts);
+        scrollView = (ScrollView) findViewById(R.id.scrollview_aboouts);
+        scrollView.requestDisallowInterceptTouchEvent(true);
+       // swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_to_refresh_abouts);
         db = new NoticeDB(getApplicationContext());
         pathsDB = new PathsDB(getApplicationContext());
+        cardView = (CardView) findViewById(R.id.cardView_abouts);
         subsDB = new SubsDB(getApplicationContext());
+        linearLayout = (LinearLayout) findViewById(R.id.layout_abouts);
         downloadsDB = new DownloadsDB(getApplicationContext());
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_abouts);
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_abouts);
@@ -109,21 +120,20 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
          /*linking drawer layout and drawer toggle
         drawer toggle keeps the track of who is active on the screen drawer or main content*/
         mDrawerToggle.syncState(); //Synchronizes the state of hamburger icon
-        cardView = (CardView) findViewById(R.id.cardView_abouts);
         name = (TextView) findViewById(R.id.name);
         email = (TextView) findViewById(R.id.email);
         contact = (TextView) findViewById(R.id.contact);
-        about = (TextView) findViewById(R.id.about);
+        about = (HtmlTextView) findViewById(R.id.about);
         website = (TextView) findViewById(R.id.website);
         name.setTypeface(null, Typeface.BOLD);
         sessionManager = new SessionManager(getApplicationContext());
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+      /*  swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 fetchAndFeedData();
             }
-        });
+        });*/
 
         if(sessionManager.getKeyAbouts()){
             fetchAndFeedData();
@@ -141,7 +151,8 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
             populateOtherViews();
         }
 
-        cardView.setOnClickListener(new View.OnClickListener() {
+
+        linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Dialog dialog = new Dialog(Abouts.this);
@@ -159,8 +170,9 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(Intent.ACTION_DIAL,
-                                Uri.parse("tel:" + contacts.trim()));
+                                Uri.parse("tel:" + listData.get(0).getContacts()));
                         startActivity(intent);
+                       // Toast.makeText(getApplicationContext(), contacts.trim(), Toast.LENGTH_LONG).show();
 
                     }
                 });
@@ -365,15 +377,16 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         name.setText(listData.get(0).getName());
         email.setText(listData.get(0).getEmail());
         contact.setText(listData.get(0).getContacts());
-        about.setText(listData.get(0).getAbouts());
+        //about.setText(listData.get(0).getAbouts());
+        about.setHtmlFromString(listData.get(0).getAbouts(), new HtmlTextView.LocalImageGetter());
         website.setText(listData.get(0).getWebsite());
         webUrl = listData.get(0).getWebsite();
 
         longitude = listData.get(0).getLongitude();
         latitude = listData.get(0).getLatitude();
         pinName = listData.get(0).getName();
-        if(swipeRefreshLayout.isRefreshing()){
+        /*if(swipeRefreshLayout.isRefreshing()){
             swipeRefreshLayout.setRefreshing(false);
-        }
+        }*/
     }
 }

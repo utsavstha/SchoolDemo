@@ -5,50 +5,67 @@
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:id="@+id/abouts_layout"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.utsav.schooldemo.Activities.Details"
     tools:showIn="@layout/activity_details">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
-        android:padding="16dp">
+    <ScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/title_details"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Opening"
-            android:textSize="30dp" />
+            android:layout_marginBottom="60dp"
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/date_details"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title_details"
-            android:text="28 Aug 2012" />
-
-        <ScrollView
-            android:id="@+id/scroller_id"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/date_details"
-            android:fillViewport="true"
-            android:scrollbars="vertical">
-
-            <org.sufficientlysecure.htmltextview.HtmlTextView
-                android:id="@+id/message_details"
+            <TextView
+                android:id="@+id/title_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:scrollHorizontally="true"
-                android:text="This is a dummy message"
-                android:textSize="20sp" />
-        </ScrollView>
+                android:text="Opening"
+                android:textSize="30dp" />
+
+            <TextView
+                android:id="@+id/date_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="28 Aug 2012" />
+
+            <ImageView
+                android:id="@+id/image_details_news"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="4dp"
+                android:foregroundGravity="left"
+                android:src="@drawable/eye106"
+                android:visibility="gone" />
+
+            <ScrollView
+                android:id="@+id/scroller_id"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="vertical">
+
+                <org.sufficientlysecure.htmltextview.HtmlTextView
+                    android:id="@+id/message_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:scrollHorizontally="true"
+                    android:text="This is a dummy message"
+                    android:textSize="20sp" />
+            </ScrollView>
 
 
-    </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+
     <SeekBar
         android:id="@+id/seekBar1"
         android:layout_width="match_parent"

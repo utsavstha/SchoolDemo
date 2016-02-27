@@ -27,10 +27,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.utsav.schooldemo.DBClasses.NewsDB;
 import com.example.utsav.schooldemo.DBClasses.SubsDB;
+import com.example.utsav.schooldemo.DataClasses.NewsData;
 import com.example.utsav.schooldemo.DataClasses.NoticeData;
 import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.Utils.RVAdapter;
+import com.example.utsav.schooldemo.Utils.RVAdapterNews;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
@@ -53,7 +55,7 @@ public class News extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, PopulateViews{
     public static String TAG = News.class.getSimpleName();
     private RecyclerView recyclerView;  //recycler view variable
-    private List<NoticeData> listData = new ArrayList<>() ; //creating list of the Notice data class
+    private List<NewsData> listData = new ArrayList<>() ; //creating list of the Notice data class
     private SwipeRefreshLayout swipeRefreshLayout;
     private NavigationView mDrawer;   //object to initialise navigation view
     private DrawerLayout mDrawerLayout; //object that holds id to drawer layout
@@ -130,6 +132,9 @@ public class News extends AppCompatActivity implements
                                         listData.get(position).getDay()+ ", "+
                                         listData.get(position).getYear());
                         intent.putExtra("message", listData.get(position).getMessage());
+                        intent.putExtra("id", listData.get(position).getId());
+                        intent.putExtra("path", listData.get(position).getImagePath());
+                        intent.putExtra("url", listData.get(position).getImageUrl());
 
                         startActivity(intent);
                     }
@@ -147,7 +152,7 @@ public class News extends AppCompatActivity implements
         progressView.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
         //progressView.
-        RVAdapter adapter = new RVAdapter(listData);
+        RVAdapterNews adapter = new RVAdapterNews(listData);
 
         recyclerView.setAdapter(adapter);
         //swipeRefreshLayout.setRefreshing(false);
@@ -199,14 +204,16 @@ public class News extends AppCompatActivity implements
                                 for (i = 0; i < length; i++) {
 
                                     JSONObject noticeValue = notice.getJSONObject(i);
+                                    String id = noticeValue.getString("news_id");
                                     String title = noticeValue.getString("title");
                                     String message = noticeValue.getString("message");
                                     String day = noticeValue.getString("day");
                                     String month = noticeValue.getString("month");
                                     String year = noticeValue.getString("year");
                                     String weekday = noticeValue.getString("weekday");
+                                    String url = noticeValue.getString("image");
                                     //add data to db
-                                    db.addNotice(title, message, weekday ,month, day, year);
+                                    db.addNotice(id, title, message, weekday ,month, day, year,url,"xxx");
 
                                 }
                                 session.setKeyNews(false);
