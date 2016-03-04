@@ -5,10 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.example.utsav.schooldemo.DataClasses.NewsData;
-import com.example.utsav.schooldemo.DataClasses.NoticeData;
 
 import java.util.ArrayList;
 import java.util.List;

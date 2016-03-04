@@ -3,9 +3,9 @@ package com.example.utsav.schooldemo.Activities;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +20,6 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.example.utsav.schooldemo.DBClasses.SQLiteHandler;
 import com.example.utsav.schooldemo.DataClasses.ClientsData;
 import com.example.utsav.schooldemo.R;
-import com.example.utsav.schooldemo.Utils.CircularNetworkImageView;
 import com.example.utsav.schooldemo.Utils.CustomVolleyRequestQueue;
 import com.example.utsav.schooldemo.app.SessionManager;
 
@@ -100,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 }else{
                     //String cid = listData.get(position).getName().replaceAll(" ", "+");
                     session.setLogin(true, listData.get(position).getCid());
-                    finishAffinity();
+                    ActivityCompat.finishAffinity(MainActivity.this);
                     startActivity(new Intent(MainActivity.this, NoticeAndStuff.class));
                 }
 
@@ -117,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         // moveTaskToBack(true);
         if (count == 1) {
             count = 0;
-            finishAffinity();
+            System.exit(1);
         } else {
             Toast.makeText(getApplicationContext(), "Press Back again to quit.", Toast.LENGTH_SHORT).show();
             count++;

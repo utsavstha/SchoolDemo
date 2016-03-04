@@ -1,12 +1,12 @@
 package com.example.utsav.schooldemo.Activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,7 +23,7 @@ import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;
-import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,14 +32,12 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import it.michelelacorte.elasticprogressbar.ElasticDownloadView;
-
 public class SplashScreen extends AppCompatActivity {
     int i;
     static int count = 0;
     public static String TAG = SplashScreen.class.getSimpleName();
     private SQLiteHandler db;
-    CircularProgressView cv;
+    CircleProgressBar cv;
     private Handler handler = new Handler();
     private int mProgress = 0;
     SessionManager session;
@@ -49,15 +47,19 @@ public class SplashScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        cv = (CircularProgressView) findViewById(R.id.progress);
-        cv.setIndeterminate(true);
+        cv = (CircleProgressBar) findViewById(R.id.progress);
+
+
+        cv.setColorSchemeResources(android.R.color.holo_green_light,
+                android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        cv.setCircleBackgroundEnabled(false);
 
         session = new SessionManager(getApplicationContext());
         if (session.isLoggedIn()) {
             Intent intent = new Intent(SplashScreen.this, NoticeAndStuff.class);
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
             startActivity(intent);
-            //finish();
+            //ActivityCompat.finishAffinity(this);
         }
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id
                 .coordinatorLayout_splash);
@@ -67,7 +69,8 @@ public class SplashScreen extends AppCompatActivity {
         } catch (Exception e) {
             //Log.d(TAG, e.toString());
         }
-      cv.startAnimation();
+        cv.setVisibility(View.VISIBLE);
+        //  cv.startAnimation();
        // OptionView.noBackground = true;
         if (!session.isLoggedIn())
             startProgress();
@@ -119,7 +122,7 @@ public class SplashScreen extends AppCompatActivity {
                                 }
                                 Intent intent = new Intent(SplashScreen.this, MainActivity.class);
                                 //intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                                finishAffinity();
+                                ActivityCompat.finishAffinity(SplashScreen.this);
                                 startActivity(intent);
 
                             } else {
@@ -195,7 +198,7 @@ public class SplashScreen extends AppCompatActivity {
     public void onBackPressed() {
         if (count == 1) {
             count = 0;
-            finish();
+            ActivityCompat.finishAffinity(this);
         } else {
             Toast.makeText(getApplicationContext(), "Press Back again to quit.", Toast.LENGTH_SHORT).show();
             count++;

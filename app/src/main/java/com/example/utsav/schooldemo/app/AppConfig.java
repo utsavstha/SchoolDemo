@@ -6,9 +6,9 @@ package com.example.utsav.schooldemo.app;
 public class AppConfig {
 
     // Server client list
-    public static String URL_LIST = "http://app.nliverary.com/v1/";
+    public static String URL_LIST = "http://nbulletin.nliverary.com/v1/";
 
 
     // Server login
-    public static String URL_LOGIN = "http://app.nliverary.com/v1/";
+    public static String URL_LOGIN = "http://nbulletin.nliverary.com/v1/";
 }

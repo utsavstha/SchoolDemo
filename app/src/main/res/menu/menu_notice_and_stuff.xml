@@ -13,6 +13,11 @@
         android:title="@string/Logout"
         app:showAsAction="never" />
     <item
+        android:title="refresh"
+        android:id="@+id/refresh"
+        android:icon="@drawable/ic_refresh"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"
         app:showAsAction="always"

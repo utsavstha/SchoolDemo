@@ -28,15 +28,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 
-                <com.github.rahatarmanahmed.cpv.CircularProgressView
-                    android:layout_marginTop="20dp"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:layout_gravity="center"
+                <com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar
+                    app:mlpb_show_arrow="false"
                     android:id="@+id/progress_view_downloads"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:visibility="gone"
-                    app:cpv_indeterminate="true" />
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:visibility="gone" />
             </FrameLayout>
         </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -45,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            app:itemIconTint="@color/colorAccent"
+            app:itemIconTint="@color/colorSecondaryText"
             app:itemTextColor="@color/colorPrimaryText"
             app:menu="@menu/menu_drawer" />
     </android.support.v4.widget.DrawerLayout>

@@ -3,7 +3,6 @@ package com.example.utsav.schooldemo.Activities;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -11,6 +10,7 @@ import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -45,7 +45,7 @@ import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.Logout;
 import com.example.utsav.schooldemo.app.PopulateViews;
 import com.example.utsav.schooldemo.app.SessionManager;
-import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,7 +67,7 @@ public class DownloadFiles extends AppCompatActivity implements
         SwipeRefreshLayout.OnRefreshListener, PopulateViews{
     public static String TAG = DownloadFiles.class.getSimpleName();
     private RecyclerView recyclerView;  //recycler view variable
-    CircularProgressView progressView;
+    CircleProgressBar progressView;
     private SwipeRefreshLayout swipeRefreshLayout;
     private NavigationView mDrawer;   //object to initialise navigation view
     private DrawerLayout mDrawerLayout; //object that holds id to drawer layout
@@ -94,7 +94,7 @@ public class DownloadFiles extends AppCompatActivity implements
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_download);
         setSupportActionBar(toolbar);
         recyclerView = (RecyclerView) findViewById(R.id.rv_list_downloads);
-        progressView = (CircularProgressView) findViewById(R.id.progress_view_downloads);
+        progressView = (CircleProgressBar) findViewById(R.id.progress_view_downloads);
         mDrawer = (NavigationView) findViewById(R.id.main_drawer_download);//initialising navigation view
         mDrawer.setNavigationItemSelectedListener(this);           //tells this activity will handle click events
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_to_refresh_download);
@@ -112,17 +112,20 @@ public class DownloadFiles extends AppCompatActivity implements
          //linking drawer layout and drawer toggle
         //drawer toggle keeps the track of who is active on the screen drawer or main content
         mDrawerToggle.syncState(); //Synchronizes the state of hamburger icon
-        progressView.setColor(Color.parseColor("#D32F2F"));
         sessionManager = new SessionManager(getApplicationContext());
         subsDB = new SubsDB(getApplicationContext());
         db  = new NoticeDB(getApplicationContext());
         subsData = subsDB.getSubsList();
         downloadsDB = new DownloadsDB(getApplicationContext());
         pathsDB = new PathsDB(getApplicationContext());
+
+        progressView.setColorSchemeResources(android.R.color.holo_green_light,
+                android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        progressView.setCircleBackgroundEnabled(false);
+
         if(sessionManager.getKeyDownloads()){
             fetchDataAndAddToDownloads(sessionManager.getCid());
             progressView.setVisibility(View.VISIBLE);
-            progressView.startAnimation();
             recyclerView.setVisibility(View.GONE);
 
         }else{
@@ -279,22 +282,22 @@ public class DownloadFiles extends AppCompatActivity implements
         Intent intent = null;
         if(item.getItemId() == R.id.news){
             startActivity(new Intent(DownloadFiles.this, News.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(DownloadFiles.this, Abouts.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(DownloadFiles.this, FeedBack.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.notice_board){
             startActivity(new Intent(DownloadFiles.this, NoticeAndStuff.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.contacts){
             startActivity(new Intent(DownloadFiles.this, Contacts.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.resources) {
             startActivity(new Intent(DownloadFiles.this, Resources.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }
 
         return true;
@@ -317,11 +320,11 @@ public class DownloadFiles extends AppCompatActivity implements
                 // Red item was selected
                 Logout logout = new Logout(getApplicationContext());
                 startActivity(new Intent(DownloadFiles.this, SplashScreen.class));
-                finish();
+                ActivityCompat.finishAffinity(this);
                 return true;
             case R.id.action_subs:
                 startActivity(new Intent(DownloadFiles.this, Subscriptions.class));
-                //finish();
+                //ActivityCompat.finishAffinity(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -332,6 +335,20 @@ public class DownloadFiles extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_notice_and_stuff, menu);
+        // getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem refresh = menu.findItem(R.id.refresh);
+
+        refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                fetchDataAndAddToDownloads(sessionManager.getCid());
+                progressView.setVisibility(View.VISIBLE);
+                //progressView.startAnimation();
+                recyclerView.setVisibility(View.GONE);
+                return true;
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
     @Override
@@ -376,7 +393,7 @@ public class DownloadFiles extends AppCompatActivity implements
             //set the path where we want to save the file
             File SDCardRoot = Environment.getExternalStorageDirectory();
             //create a new file, to save the downloaded file
-            final File directory = new File(SDCardRoot, "/bulletin/");
+            final File directory = new File(SDCardRoot, "/nBulletin/");
             if (!directory.exists())
             {
                 directory.mkdir();
@@ -455,7 +472,7 @@ public class DownloadFiles extends AppCompatActivity implements
     @Override
     public void onBackPressed()
     {
-        finishAffinity();
+        ActivityCompat.finishAffinity(this);
         startActivity(new Intent(DownloadFiles.this, NoticeAndStuff.class));
     }
 

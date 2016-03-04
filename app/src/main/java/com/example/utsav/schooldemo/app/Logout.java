@@ -41,6 +41,7 @@ public class Logout {
         contactsDB = new ContactsDB(context);
         aboutsDB = new AboutsDB(context);
 
+
         aboutsDB.deleteClients();
         newsDB.deleteClients();
         pathsDB.deleteRecords();
@@ -54,6 +55,7 @@ public class Logout {
         sessionManager.setKeyContacts(true);
         sessionManager.setKeyNews(true);
         sessionManager.setKeyAbouts(true);
+        // sessionManager.setKey(false);
         deleteFiles(directory.toString());
 
     }

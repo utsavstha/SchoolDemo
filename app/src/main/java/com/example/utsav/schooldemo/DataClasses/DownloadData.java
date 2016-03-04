@@ -13,7 +13,8 @@ public class DownloadData {
     private String month;
     private String year;
 
-    public DownloadData(int id, String title, String link, String size,String path, String day, String month, String year) {
+    public DownloadData(int id, String title, String link, String size,
+                        String path, String day, String month, String year) {
         this.id = id;
         this.title = title;
         this.link = link;

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.example.utsav.schooldemo.DataClasses.DownloadData;
 
@@ -76,7 +75,8 @@ public class DownloadsDB extends SQLiteOpenHelper {
     /**
      * Storing user details in database
      * */
-    public void addDownloadList(int _id,String title, String link, String size, String path ,String day, String month, String year) {
+    public void addDownloadList(int _id, String title, String link,
+                                String size, String path, String day, String month, String year) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -85,8 +85,8 @@ public class DownloadsDB extends SQLiteOpenHelper {
         values.put(KEY_LINK, link); // Link
         values.put(KEY_SIZE,size);
         values.put(KEY_PATH,path);
-        values.put(KEY_DAY, month); // month
-        values.put(KEY_MONTH, day); // day
+        values.put(KEY_DAY, day); // month
+        values.put(KEY_MONTH, month); // day
         values.put(KEY_YEAR, year); // year
         // Inserting Row
         long id = db.insert(TABLE_NOTICES, null, values);

@@ -1,14 +1,17 @@
 package com.example.utsav.schooldemo.Activities;
 
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -29,12 +32,13 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.davidpacioianu.inkpageindicator.InkPageIndicator;
 import com.example.utsav.schooldemo.DBClasses.ImageDB;
 import com.example.utsav.schooldemo.DBClasses.NoticeDB;
 import com.example.utsav.schooldemo.DBClasses.PathsDB;
 import com.example.utsav.schooldemo.DBClasses.SubsDB;
 import com.example.utsav.schooldemo.DataClasses.NoticeData;
+import com.example.utsav.schooldemo.Gcm.QuickstartPreferences;
+import com.example.utsav.schooldemo.Gcm.RegistrationIntentService;
 import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.CustomPagerAdapter;
 import com.example.utsav.schooldemo.Utils.HandleVolleyError;
@@ -45,7 +49,9 @@ import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.Logout;
 import com.example.utsav.schooldemo.app.PopulateViews;
 import com.example.utsav.schooldemo.app.SessionManager;
-import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,6 +62,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class NoticeAndStuff extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, PopulateViews{
@@ -77,7 +85,11 @@ public class NoticeAndStuff extends AppCompatActivity implements
     private int count = 0;
     SessionManager session;
     private String cid;
-    CircularProgressView progressView;
+    CircleProgressBar progressView;
+    Timer timer;
+    private int position = 0;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
     List<String> subsData = new ArrayList<>();
     CustomPagerAdapter customPagerAdapter;
     private CoordinatorLayout coordinatorLayout;
@@ -97,7 +109,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
         subsDB = new SubsDB(getApplicationContext());
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         recyclerView = (RecyclerView) findViewById(R.id.rv_list);
-        progressView = (CircularProgressView) findViewById(R.id.progress_view);
+        progressView = (CircleProgressBar) findViewById(R.id.progress_view);
         viewPager = (ViewPager)findViewById(R.id.pager_introduction);
 
         imageList = new ArrayList<>();
@@ -118,18 +130,37 @@ public class NoticeAndStuff extends AppCompatActivity implements
                 fetchDataAndAddToDb(cid);
             }
         });
+        if (checkPlayServices()) {
+            // Start IntentService to register this application with GCM.
+            Intent intent = new Intent(this, RegistrationIntentService.class);
+            startService(intent);
+        }
+        /*************************************************************/
         pathsDB = new PathsDB(getApplicationContext());
         session = new SessionManager(getApplicationContext());
         cid = session.getCid();
         db = new NoticeDB(getApplicationContext());
         subsData = subsDB.getSubsList();
-        progressView.setColor(Color.parseColor("#D32F2F"));
+
+        progressView.setColorSchemeResources(android.R.color.holo_green_light,
+                android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        progressView.setCircleBackgroundEnabled(false);
+
         if(session.getFetchData()){
             imageDB.addImageList("http://www.xyz.com"); //to feed view pager and the circle indicator with some initializing data
             populateImageViews();
             fetchDataAndAddToDb(cid);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (session.getKeyServer()) {
+                        sendToServer(session.getKeyRegid());
+                    }
+                }
+
+            }, 1);
             progressView.setVisibility(View.VISIBLE);
-            progressView.startAnimation();
+            // progressView.startAnimation();
             recyclerView.setVisibility(View.GONE);
         }else{
             //imageDB.deleteRecords();
@@ -141,12 +172,7 @@ public class NoticeAndStuff extends AppCompatActivity implements
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext()); //this will make the recycler view work as list view
 
         recyclerView.setLayoutManager(llm);
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                populateRecyclerView();
-            }
-        },2000);    //shift this to fetchdb method and manage the error cases*/
+
         recyclerView.addOnItemTouchListener(
                 new RecyclerTouchListener(getApplicationContext(), new RecyclerTouchListener.OnItemClickListener() {
                     @Override public void onItemClick(View view, int position) {
@@ -163,7 +189,54 @@ public class NoticeAndStuff extends AppCompatActivity implements
                     }
                 })
         );
+
+
     }
+
+    private void sendToServer(final String keyRegid) {
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_LIST, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+                    if (!error) {
+                        Log.d(TAG, response);
+                        session.setKey(true);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Login Error: " + error.getMessage());
+
+                // hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("tag", "gcm");
+                params.put("cid", session.getCid());
+                params.put("regId", keyRegid);
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, "regid send");
+    }
+
     public String getMonth(String month) {
         int monthValue = Integer.parseInt(month);
         return new DateFormatSymbols().getMonths()[monthValue-1];
@@ -289,8 +362,27 @@ public class NoticeAndStuff extends AppCompatActivity implements
        // Log.d(TAG, imageList.size()+"");
         customPagerAdapter = new CustomPagerAdapter(this, imageList);
         viewPager.setAdapter(customPagerAdapter);
-        InkPageIndicator inkPageIndicator = (InkPageIndicator) findViewById(R.id.indicator);
-        inkPageIndicator.setViewPager(viewPager);
+        viewPager.setCurrentItem(0);
+
+        // Timer for auto sliding
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (position <= imageList.size()) {
+                            viewPager.setCurrentItem(position);
+                            position++;
+                        } else {
+                            position = 0;
+                            viewPager.setCurrentItem(position);
+                        }
+                    }
+                });
+            }
+        }, 500, 3000);
     }
 
     @Override
@@ -302,22 +394,22 @@ public class NoticeAndStuff extends AppCompatActivity implements
     public boolean onNavigationItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.news){
             startActivity(new Intent(NoticeAndStuff.this, News.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(NoticeAndStuff.this, Abouts.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(NoticeAndStuff.this, FeedBack.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if (item.getItemId() == R.id.downloads){
             startActivity(new Intent(NoticeAndStuff.this, DownloadFiles.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.contacts){
             startActivity(new Intent(NoticeAndStuff.this, Contacts.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.resources) {
             startActivity(new Intent(NoticeAndStuff.this, Resources.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }
 
         return true;
@@ -332,6 +424,20 @@ public class NoticeAndStuff extends AppCompatActivity implements
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) NoticeAndStuff.this.getSystemService(Context.SEARCH_SERVICE);
 
+        MenuItem refresh = menu.findItem(R.id.refresh);
+
+        refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                imageDB.addImageList("http://www.xyz.com"); //to feed view pager and the circle indicator with some initializing data
+                populateImageViews();
+                fetchDataAndAddToDb(cid);
+                progressView.setVisibility(View.VISIBLE);
+                // progressView.startAnimation();
+                recyclerView.setVisibility(View.GONE);
+                return true;
+            }
+        });
         SearchView searchView = null;
         if (searchItem != null) {
             searchView = (SearchView) searchItem.getActionView();
@@ -362,11 +468,11 @@ public class NoticeAndStuff extends AppCompatActivity implements
                 Logout logout = new Logout(getApplicationContext());
 
                 startActivity(new Intent(NoticeAndStuff.this, SplashScreen.class));
-                finish();
+                ActivityCompat.finishAffinity(this);
                 return true;
             case R.id.action_subs:
                 startActivity(new Intent(NoticeAndStuff.this, Subscriptions.class));
-                //finish();
+                //ActivityCompat.finishAffinity(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -380,10 +486,10 @@ public class NoticeAndStuff extends AppCompatActivity implements
         if(count == 1)
         {
             count=0;
-            finish();
-            System.exit(0);
-        }
-        else
+            moveTaskToBack(true);
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(1);
+        } else
         {
             Toast.makeText(getApplicationContext(), "Press Back again to quit.", Toast.LENGTH_SHORT).show();
             count++;
@@ -410,6 +516,39 @@ public class NoticeAndStuff extends AppCompatActivity implements
         if(swipeRefreshLayout.isRefreshing()){
             swipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+
+        super.onPause();
+    }
+
+    /**
+     * Check the device to make sure it has the Google Play Services APK. If
+     * it doesn't, display a dialog that allows users to download the APK from
+     * the Google Play Store or enable it in the device's system settings.
+     */
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
+                        .show();
+            } else {
+                Log.i(TAG, "This device is not supported.");
+                ActivityCompat.finishAffinity(this);
+            }
+            return false;
+        }
+        return true;
     }
 
 }

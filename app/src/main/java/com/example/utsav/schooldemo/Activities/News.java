@@ -1,12 +1,12 @@
 package com.example.utsav.schooldemo.Activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -28,10 +28,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.example.utsav.schooldemo.DBClasses.NewsDB;
 import com.example.utsav.schooldemo.DBClasses.SubsDB;
 import com.example.utsav.schooldemo.DataClasses.NewsData;
-import com.example.utsav.schooldemo.DataClasses.NoticeData;
 import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.HandleVolleyError;
-import com.example.utsav.schooldemo.Utils.RVAdapter;
 import com.example.utsav.schooldemo.Utils.RVAdapterNews;
 import com.example.utsav.schooldemo.Utils.RecyclerTouchListener;
 import com.example.utsav.schooldemo.app.AppConfig;
@@ -39,7 +37,7 @@ import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.Logout;
 import com.example.utsav.schooldemo.app.PopulateViews;
 import com.example.utsav.schooldemo.app.SessionManager;
-import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,7 +62,7 @@ public class News extends AppCompatActivity implements
     private String cid;
     SubsDB subsDB;
     NewsDB db;
-    CircularProgressView progressView;
+    CircleProgressBar progressView;
     List<String> subsData = new ArrayList<>();
     private CoordinatorLayout coordinatorLayout;
     @Override
@@ -83,7 +81,7 @@ public class News extends AppCompatActivity implements
         subsDB = new SubsDB(getApplicationContext());
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_news);
         recyclerView = (RecyclerView) findViewById(R.id.rv_list_news);
-        progressView = (CircularProgressView) findViewById(R.id.progress_view_news);
+        progressView = (CircleProgressBar) findViewById(R.id.progress_view_news);
         db = new NewsDB(getApplicationContext());
         mDrawerToggle = new ActionBarDrawerToggle(this,
                 mDrawerLayout,
@@ -97,7 +95,6 @@ public class News extends AppCompatActivity implements
         session = new SessionManager(getApplicationContext());
         cid = session.getCid();
         subsData = subsDB.getSubsList();
-        progressView.setColor(Color.parseColor("#D32F2F"));
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
@@ -106,10 +103,15 @@ public class News extends AppCompatActivity implements
             }
         });
         Log.e(TAG,session.getKeyNews()+"");
+
+        progressView.setColorSchemeResources(android.R.color.holo_green_light,
+                android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        progressView.setCircleBackgroundEnabled(false);
+
         if(session.getKeyNews()){
             fetchDataNews(cid);
             progressView.setVisibility(View.VISIBLE);
-            progressView.startAnimation();
+            //progressView.startAnimation();
             recyclerView.setVisibility(View.GONE);
         }else{
             populateRecyclerView();
@@ -286,22 +288,22 @@ public class News extends AppCompatActivity implements
         Intent intent = null;
         if(item.getItemId() == R.id.notice_board){
             startActivity(new Intent(News.this, NoticeAndStuff.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(News.this, Abouts.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(News.this, FeedBack.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if (item.getItemId() == R.id.downloads){
             startActivity(new Intent(News.this, DownloadFiles.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.contacts){
             startActivity(new Intent(News.this, Contacts.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.resources) {
             startActivity(new Intent(News.this, Resources.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }
 
         return true;
@@ -309,12 +311,26 @@ public class News extends AppCompatActivity implements
     @Override
     public void onBackPressed() {
         startActivity(new Intent(News.this, NoticeAndStuff.class));
-        finishAffinity();
+        ActivityCompat.finishAffinity(this);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_notice_and_stuff, menu);
+        // getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem refresh = menu.findItem(R.id.refresh);
+
+        refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                fetchDataNews(cid);
+                progressView.setVisibility(View.VISIBLE);
+                // progressView.startAnimation();
+                recyclerView.setVisibility(View.GONE);
+                return true;
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
     @Override
@@ -325,11 +341,11 @@ public class News extends AppCompatActivity implements
                 Logout logout = new Logout(getApplicationContext());
 
                 startActivity(new Intent(News.this, SplashScreen.class));
-                finishAffinity();
+                ActivityCompat.finishAffinity(this);
                 return true;
             case R.id.action_subs:
                 startActivity(new Intent(News.this, SubscriptionNews.class));
-                //finish();
+                //ActivityCompat.finishAffinity(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

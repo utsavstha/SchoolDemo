@@ -2,7 +2,6 @@ package com.example.utsav.schooldemo.Utils;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,9 +20,9 @@ import java.util.List;
 public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.DataViewHolder> {
     List<DownloadData> data;
     PathsDB pathsDB;
-    String months[] = {"","Jan", "Feb", "Mar", "Apr",
+    /*String months[] = {"","Jan", "Feb", "Mar", "Apr",
             "May", "Jun", "Jul", "Aug", "Sep",
-            "Oct", "Nov", "Dec"};
+            "Oct", "Nov", "Dec"};*/
 
     public RVAdapterDownloads(List<DownloadData> data) {
        // this.data.clear();
@@ -65,8 +64,8 @@ public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.
         //subtracting 1 to fix the array starting from 0 problem
        // int month = Integer.parseInt();
         String month = data.get(position).getMonth();
-        int value = Integer.parseInt(month);
-        Log.d("RVAdapter", value+"");
+        //int value = Integer.parseInt(month);
+        //Log.d("RVAdapter", value+"");
         String yr = data.get(position).getYear();
         String year;
         if (yr != null && yr.length() >= 2) {
@@ -74,9 +73,10 @@ public class RVAdapterDownloads extends RecyclerView.Adapter<RVAdapterDownloads.
         }else
             year = yr;
         //String mY =  months[month] +", "+ year;
-        String mY =  months[value-26] +", "+ year;
+        String mY = data.get(position).getMonth() + ", " + year;
         //String mY =  data.get(position).getMonth()+ ", "+ data.get(position).getYear();
 
+        // holder.day.setText(data.get(position).getDay());
         holder.monthYear.setText(mY);
         holder.title.setText(data.get(position).getTitle());
         holder.size.setText(data.get(position).getSize());

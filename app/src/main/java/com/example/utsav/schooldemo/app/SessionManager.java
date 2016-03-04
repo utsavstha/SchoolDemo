@@ -3,10 +3,10 @@ package com.example.utsav.schooldemo.app;
 /**
  * Created by utsav on 1/2/2016.
  */
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.util.Log;
 
 public class SessionManager {
     // LogCat tag
@@ -32,6 +32,8 @@ public class SessionManager {
     private static final String KEY_DOWNLOADS = "downloadFile";
     private static final String KEY_NEWS = "news";
     private static final String KEY_ABOUTS = "abouts";
+    private static final String KEY_SERVER = "server";
+    private static final String KEY_REGID = "regID";
 
     public SessionManager(Context context) {
         this._context = context;
@@ -49,6 +51,22 @@ public class SessionManager {
         //Log.d(TAG, "User login session modified!");
     }
 
+    public void setKeyRegid(String id) {
+
+        editor.putString(KEY_REGID, id);
+        editor.commit();
+
+        //Log.d(TAG, "User login session modified!");
+    }
+
+    public void setKey(boolean isSent) {           //true if the key has already been sent to server
+
+        editor.putBoolean(KEY_SERVER, isSent);
+        // commit changes
+        editor.commit();
+
+        //Log.d(TAG, "User login session modified!");
+    }
     public void setKeyFetch(boolean fetchData){
         editor.putBoolean(KEY_FETCH, fetchData);
         editor.commit();
@@ -95,5 +113,13 @@ public class SessionManager {
 
     public boolean getKeyAbouts() {
         return pref.getBoolean(KEY_ABOUTS, true);     //false if file list exists and no download required
+    }
+
+    public boolean getKeyServer() {
+        return pref.getBoolean(KEY_SERVER, false);     //false if the key is not sent to server
+    }
+
+    public String getKeyRegid() {
+        return pref.getString(KEY_REGID, "NOT FOUND");
     }
 }

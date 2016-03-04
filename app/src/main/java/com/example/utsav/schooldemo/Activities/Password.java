@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -48,7 +49,7 @@ public class Password extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Password.this, MainActivity.class));
-                finishAffinity();
+                ActivityCompat.finishAffinity(Password.this);
             }
         });
         editText = (EditText) findViewById(R.id.password_login);
@@ -93,11 +94,10 @@ public class Password extends AppCompatActivity {
                     if (!error) {
                         // user successfully logged in
                         session.setLogin(!error, cidFinal);
-
                         //Launch main activity
                         Intent i=new Intent(getApplicationContext(), NoticeAndStuff.class);
                         i.setFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        finishAffinity();
+                        ActivityCompat.finishAffinity(Password.this);
                         startActivity(i);
 
                     } else {

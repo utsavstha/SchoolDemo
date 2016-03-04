@@ -1,13 +1,13 @@
 package com.example.utsav.schooldemo.Activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -36,7 +36,7 @@ import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.Logout;
 import com.example.utsav.schooldemo.app.PopulateViews;
 import com.example.utsav.schooldemo.app.SessionManager;
-import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,7 +51,7 @@ public class Resources extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener, PopulateViews{
     public static String TAG = Resources.class.getSimpleName();
     SessionManager sessionManager;
-    CircularProgressView progressView;
+    CircleProgressBar progressView;
     private RecyclerView recyclerView;  //recycler view variable
     private SwipeRefreshLayout swipeRefreshLayout;
     private NavigationView mDrawer;   //object to initialise navigation view
@@ -71,7 +71,7 @@ public class Resources extends AppCompatActivity implements
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_to_refresh_resources);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_resources);
         recyclerView = (RecyclerView) findViewById(R.id.rv_list_resources);
-        progressView = (CircularProgressView) findViewById(R.id.progress_view_resources);
+        progressView = (CircleProgressBar) findViewById(R.id.progress_view_resources);
         toolbar.showOverflowMenu();
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id
                 .coordinatorLayout_resources);
@@ -85,7 +85,11 @@ public class Resources extends AppCompatActivity implements
         drawer toggle keeps the track of who is active on the screen drawer or main content*/
         mDrawerToggle.syncState(); //Synchronizes the state of hamburger icon
         sessionManager = new SessionManager(getApplicationContext());
-        progressView.setColor(Color.parseColor("#D32F2F"));
+
+        progressView.setColorSchemeResources(android.R.color.holo_green_light,
+                android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        progressView.setCircleBackgroundEnabled(false);
+
         LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext()); //this will make the recycler view work as list view
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -97,7 +101,7 @@ public class Resources extends AppCompatActivity implements
         });
         recyclerView.setLayoutManager(llm);
         progressView.setVisibility(View.VISIBLE);
-        progressView.startAnimation();
+        //progressView.startAnimation();
         fetchResourcesData(sessionManager.getCid());
 
         recyclerView.addOnItemTouchListener(
@@ -204,6 +208,19 @@ public class Resources extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_notice_and_stuff, menu);
+        // getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem refresh = menu.findItem(R.id.refresh);
+
+        refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                progressView.setVisibility(View.VISIBLE);
+                // progressView.startAnimation();
+                fetchResourcesData(sessionManager.getCid());
+                return true;
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
     @Override
@@ -223,29 +240,29 @@ public class Resources extends AppCompatActivity implements
         Intent intent = null;
         if(item.getItemId() == R.id.news){
             startActivity(new Intent(Resources.this, News.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(Resources.this, Abouts.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(Resources.this, FeedBack.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if (item.getItemId() == R.id.downloads){
             startActivity(new Intent(Resources.this, DownloadFiles.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.contacts){
             startActivity(new Intent(Resources.this, Contacts.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.notice_board) {
             startActivity(new Intent(Resources.this, NoticeAndStuff.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }
         return true;
     }
     @Override
     public void onBackPressed()
     {
-        finishAffinity();
+        ActivityCompat.finishAffinity(this);
         startActivity(new Intent(Resources.this, NoticeAndStuff.class));
     }
 
@@ -267,11 +284,11 @@ public class Resources extends AppCompatActivity implements
                 // Red item was selected
                 Logout logout = new Logout(getApplicationContext());
                 startActivity(new Intent(Resources.this, SplashScreen.class));
-                finish();
+                ActivityCompat.finishAffinity(this);
                 return true;
             case R.id.action_subs:
                 startActivity(new Intent(Resources.this, Subscriptions.class));
-                //finish();
+                //ActivityCompat.finishAffinity(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

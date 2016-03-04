@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -44,7 +45,7 @@ public class Details extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Details.this, NoticeAndStuff.class));
-                finish();
+                ActivityCompat.finishAffinity(Details.this);
             }
         });
         fab = (FloatingActionButton) findViewById(R.id.fab_details);
@@ -73,8 +74,7 @@ public class Details extends AppCompatActivity {
                                 Intent intent = new Intent(Intent.ACTION_SEND);
                                 intent.setType("text/plain");
                                 String shareText = "Title: " + getIntent().getStringExtra("title") + "\n\n Date: " + getIntent().getStringExtra("date")
-                                        + "\n\nMessage: " + getIntent().getStringExtra("message") +
-                                        "\n\nsource: nLiveRary";
+                                        + "\n\nMessage: " + getIntent().getStringExtra("message");
                                 intent.putExtra(Intent.EXTRA_TEXT, shareText);
                                 startActivity(Intent.createChooser(intent, "Share With"));
                             }
@@ -117,7 +117,7 @@ public class Details extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         startActivity(new Intent(Details.this, NoticeAndStuff.class));
-        finishAffinity();
+        ActivityCompat.finishAffinity(this);
     }
 
     /*@Override

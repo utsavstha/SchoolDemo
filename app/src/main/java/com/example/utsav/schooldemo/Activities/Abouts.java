@@ -10,21 +10,21 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +46,7 @@ import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.Logout;
 import com.example.utsav.schooldemo.app.PopulateViews;
 import com.example.utsav.schooldemo.app.SessionManager;
-import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,7 +74,8 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
     String webUrl = "";
     AboutsDB aboutsDB;
     List<AboutsData> listData;
-    CircularProgressView circularProgressView;
+    //CircularProgressView circularProgressView;
+    CircleProgressBar progressBar;
     FloatingActionButton floatingActionButton;
     private CoordinatorLayout coordinatorLayout;
     DownloadsDB downloadsDB;
@@ -91,7 +92,8 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_abouts);
         Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
-        circularProgressView = (CircularProgressView) findViewById(R.id.progress_view_abouts);
+        progressBar = (CircleProgressBar) findViewById(R.id.progress_view_abouts_1);
+        //circularProgressView = (CircularProgressView) findViewById(R.id.progress_view_abouts);
         setSupportActionBar(toolbar);
         mDrawer = (NavigationView) findViewById(R.id.main_drawer_aboouts);//initialising navigation view
         mDrawer.setNavigationItemSelectedListener(this);           //tells this activity will handle click events
@@ -127,7 +129,9 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         website = (TextView) findViewById(R.id.website);
         name.setTypeface(null, Typeface.BOLD);
         sessionManager = new SessionManager(getApplicationContext());
-
+        progressBar.setColorSchemeResources(android.R.color.holo_green_light,
+                android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        progressBar.setCircleBackgroundEnabled(false);
       /*  swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -143,10 +147,8 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
             contact.setVisibility(View.GONE);
             about.setVisibility(View.GONE);
             website.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
 
-            circularProgressView.setVisibility(View.VISIBLE);
-            circularProgressView.setIndeterminate(true);
-            circularProgressView.startAnimation();
         }else{
             populateOtherViews();
         }
@@ -297,15 +299,39 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
     @Override
     public void onBackPressed()
     {
-        finishAffinity();
+        ActivityCompat.finishAffinity(this);
         startActivity(new Intent(Abouts.this, NoticeAndStuff.class));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_notice_and_stuff, menu);
-        return true;
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_notice_and_stuff, menu);
+        // getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem refresh = menu.findItem(R.id.refresh);
+
+        refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                fetchAndFeedData();
+                cardView.setVisibility(View.GONE);
+                name.setVisibility(View.GONE);
+                email.setVisibility(View.GONE);
+                contact.setVisibility(View.GONE);
+                about.setVisibility(View.GONE);
+                website.setVisibility(View.GONE);
+
+                //progressBar.setVisibility(View.VISIBLE);
+                //progressBar.setIndeterminate(true);
+               /* circularProgressView.setVisibility(View.VISIBLE);
+                circularProgressView.setIndeterminate(true);
+                circularProgressView.startAnimation();*/
+                return true;
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -315,11 +341,11 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
                 // Red item was selected
                 Logout logout = new Logout(getApplicationContext());
                 startActivity(new Intent(Abouts.this, SplashScreen.class));
-                finish();
+                ActivityCompat.finishAffinity(this);
                 return true;
             case R.id.action_subs:
                 startActivity(new Intent(Abouts.this, Subscriptions.class));
-                //finish();
+                //ActivityCompat.finishAffinity(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -331,22 +357,22 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
         Intent intent = null;
         if(item.getItemId() == R.id.news){
             startActivity(new Intent(Abouts.this, News.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.notice_board){
             startActivity(new Intent(Abouts.this, NoticeAndStuff.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(Abouts.this, FeedBack.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.downloads){
             startActivity(new Intent(Abouts.this, DownloadFiles.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.contacts){
             startActivity(new Intent(Abouts.this, Contacts.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.resources) {
             startActivity(new Intent(Abouts.this, Resources.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }
         return true;
     }
@@ -364,15 +390,13 @@ public class Abouts extends AppCompatActivity implements NavigationView.OnNaviga
     @Override
     public void populateOtherViews() {
         listData = aboutsDB.getClientList();
-
-        circularProgressView.setVisibility(View.GONE);
-
+        progressBar.setVisibility(View.GONE);
         cardView.setVisibility(View.VISIBLE);
         name.setVisibility(View.VISIBLE);
-        email.setVisibility(View.VISIBLE);
-        contact.setVisibility(View.VISIBLE);
+        //email.setVisibility(View.VISIBLE);
+        //contact.setVisibility(View.VISIBLE);
         about.setVisibility(View.VISIBLE);
-        website.setVisibility(View.VISIBLE);
+        //website.setVisibility(View.VISIBLE);
 
         name.setText(listData.get(0).getName());
         email.setText(listData.get(0).getEmail());

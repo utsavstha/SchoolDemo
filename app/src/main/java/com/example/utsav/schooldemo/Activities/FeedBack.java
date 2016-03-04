@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,10 +21,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.example.utsav.schooldemo.DBClasses.DownloadsDB;
 import com.example.utsav.schooldemo.DBClasses.NoticeDB;
-import com.example.utsav.schooldemo.DBClasses.PathsDB;
-import com.example.utsav.schooldemo.DBClasses.SubsDB;
 import com.example.utsav.schooldemo.R;
 import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.app.AppConfig;
@@ -172,22 +169,22 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
         Intent intent = null;
         if(item.getItemId() == R.id.news){
             startActivity(new Intent(FeedBack.this, News.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.notice_board){
             startActivity(new Intent(FeedBack.this, NoticeAndStuff.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(FeedBack.this, Abouts.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.downloads){
             startActivity(new Intent(FeedBack.this, DownloadFiles.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.contacts){
             startActivity(new Intent(FeedBack.this, Contacts.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.resources) {
             startActivity(new Intent(FeedBack.this, Resources.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }
         return true;
     }
@@ -195,7 +192,7 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
     @Override
     public void onBackPressed()
     {
-        finishAffinity();
+        ActivityCompat.finishAffinity(this);
         startActivity(new Intent(FeedBack.this, NoticeAndStuff.class));
     }
     @Override
@@ -211,11 +208,11 @@ public class FeedBack extends AppCompatActivity implements NavigationView.OnNavi
                 // Red item was selected
                 Logout logout = new Logout(getApplicationContext());
                 startActivity(new Intent(FeedBack.this, SplashScreen.class));
-                finish();
+                ActivityCompat.finishAffinity(this);
                 return true;
             case R.id.action_subs:
                 startActivity(new Intent(FeedBack.this, Subscriptions.class));
-                //finish();
+                //ActivityCompat.finishAffinity(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

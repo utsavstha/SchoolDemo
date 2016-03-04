@@ -8,7 +8,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -31,11 +31,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 public class DetailsNews extends AppCompatActivity {
 
@@ -64,7 +59,7 @@ public class DetailsNews extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(DetailsNews.this, News.class));
-                finishAffinity();
+                ActivityCompat.finishAffinity(DetailsNews.this);
             }
         });
 
@@ -116,8 +111,7 @@ public class DetailsNews extends AppCompatActivity {
                                 Intent intent = new Intent(Intent.ACTION_SEND);
                                 intent.setType("text/plain");
                                 String shareText = "Title: " + getIntent().getStringExtra("title") + "\n\n Date: " + getIntent().getStringExtra("date")
-                                        + "\n\nMessage: " + getIntent().getStringExtra("message") +
-                                        "\n\nsource: SchoolDemo";
+                                        + "\n\nMessage: " + getIntent().getStringExtra("message");
                                 intent.putExtra(Intent.EXTRA_TEXT, shareText);
                                 startActivity(Intent.createChooser(intent, "Share With"));
                             }
@@ -160,7 +154,7 @@ public class DetailsNews extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         startActivity(new Intent(DetailsNews.this, News.class));
-        finishAffinity();
+        ActivityCompat.finishAffinity(this);
     }
 
     void downloadFile(final String dwnload_file_path,final int id){
@@ -178,7 +172,7 @@ public class DetailsNews extends AppCompatActivity {
             //set the path where we want to save the file
             File SDCardRoot = Environment.getExternalStorageDirectory();
             //create a new file, to save the downloaded file
-            final File directory = new File(SDCardRoot, "/bulletin/");
+            final File directory = new File(SDCardRoot, "/nBulletin/");
             if (!directory.exists())
             {
                 directory.mkdir();

@@ -19,13 +19,5 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <com.github.rahatarmanahmed.cpv.CircularProgressView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/progress_view_clients"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:visibility="gone"
-            app:cpv_indeterminate="true" />
     </FrameLayout>
 </RelativeLayout>

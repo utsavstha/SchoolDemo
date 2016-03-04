@@ -2,13 +2,13 @@ package com.example.utsav.schooldemo.Activities;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -39,7 +38,7 @@ import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.Logout;
 import com.example.utsav.schooldemo.app.PopulateViews;
 import com.example.utsav.schooldemo.app.SessionManager;
-import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.lsjwzh.widget.materialloadingprogressbar.CircleProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,7 +54,7 @@ public class Contacts extends AppCompatActivity implements
 
     public static String TAG = Contacts.class.getSimpleName();
     SessionManager sessionManager;
-    CircularProgressView progressView;
+    CircleProgressBar progressView;
     private RecyclerView recyclerView;  //recycler view variable
     private SwipeRefreshLayout swipeRefreshLayout;
     private NavigationView mDrawer;   //object to initialise navigation view
@@ -75,7 +74,7 @@ public class Contacts extends AppCompatActivity implements
         swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe_to_refresh_contacts);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_contacts);
         recyclerView = (RecyclerView) findViewById(R.id.rv_list_contacts);
-        progressView = (CircularProgressView) findViewById(R.id.progress_view_contacts);
+        progressView = (CircleProgressBar) findViewById(R.id.progress_view_contacts);
         toolbar.showOverflowMenu();
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id
                 .coordinatorLayout_contacts);
@@ -90,11 +89,15 @@ public class Contacts extends AppCompatActivity implements
         mDrawerToggle.syncState(); //Synchronizes the state of hamburger icon
         contactsDB = new ContactsDB(getApplicationContext());
         sessionManager = new SessionManager(getApplicationContext());
-        progressView.setColor(Color.parseColor("#D32F2F"));
+
+        progressView.setColorSchemeResources(android.R.color.holo_green_light,
+                android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        progressView.setCircleBackgroundEnabled(false);
+
         if(sessionManager.getKeyContacts()){
             fetchContactsData(sessionManager.getCid());
             progressView.setVisibility(View.VISIBLE);
-            progressView.startAnimation();
+            //swipeRefreshLayout.setRefreshing(true);
             recyclerView.setVisibility(View.GONE);
 
         }else{
@@ -183,6 +186,20 @@ public class Contacts extends AppCompatActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_notice_and_stuff, menu);
+        // getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem refresh = menu.findItem(R.id.refresh);
+
+        refresh.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                fetchContactsData(sessionManager.getCid());
+                progressView.setVisibility(View.VISIBLE);
+                //progressView.startAnimation();
+                recyclerView.setVisibility(View.GONE);
+                return true;
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
     }
     private void fetchContactsData(final String cid) {
@@ -281,22 +298,22 @@ public class Contacts extends AppCompatActivity implements
         Intent intent = null;
         if(item.getItemId() == R.id.news){
             startActivity(new Intent(Contacts.this, News.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.abouts){
             startActivity(new Intent(Contacts.this, Abouts.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.feed_back){
             startActivity(new Intent(Contacts.this, FeedBack.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if (item.getItemId() == R.id.downloads){
             startActivity(new Intent(Contacts.this, DownloadFiles.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.notice_board){
             startActivity(new Intent(Contacts.this, NoticeAndStuff.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }else if(item.getItemId() == R.id.resources) {
             startActivity(new Intent(Contacts.this, Resources.class));
-            finishAffinity();
+            ActivityCompat.finishAffinity(this);
         }
 
         return true;
@@ -310,11 +327,11 @@ public class Contacts extends AppCompatActivity implements
                 Logout logout = new Logout(getApplicationContext());
 
                 startActivity(new Intent(Contacts.this, SplashScreen.class));
-                finish();
+                ActivityCompat.finishAffinity(this);
                 return true;
             case R.id.action_subs:
                 startActivity(new Intent(Contacts.this, Subscriptions.class));
-                //finish();
+                //ActivityCompat.finishAffinity(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -323,7 +340,7 @@ public class Contacts extends AppCompatActivity implements
     @Override
     public void onBackPressed()
     {
-        finishAffinity();
+        ActivityCompat.finishAffinity(this);
         startActivity(new Intent(Contacts.this, NoticeAndStuff.class));
     }
 }

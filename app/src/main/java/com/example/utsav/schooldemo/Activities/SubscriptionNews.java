@@ -5,13 +5,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,7 +29,6 @@ import com.example.utsav.schooldemo.Utils.HandleVolleyError;
 import com.example.utsav.schooldemo.app.AppConfig;
 import com.example.utsav.schooldemo.app.AppController;
 import com.example.utsav.schooldemo.app.SessionManager;
-import com.hanks.library.AnimateCheckBox;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +48,8 @@ public class SubscriptionNews extends AppCompatActivity {
     private Set<Demo> checkedSet = new HashSet<>();
     SessionManager session;
     SubsDB subsDB;
-    boolean isCheck = false;
+    CheckBox checkBox;
+    // Demo item;
     List<String> data = new ArrayList();
     private CoordinatorLayout coordinatorLayout;
 
@@ -66,7 +68,7 @@ public class SubscriptionNews extends AppCompatActivity {
             public void onClick(View v) {
                 startActivity(new Intent(SubscriptionNews.this, News.class));
                 session.setKeyFetch(true);
-                finishAffinity();
+                ActivityCompat.finishAffinity(SubscriptionNews.this);
             }
         });
         //Toast.makeText(getApplicationContext(),"All previous Subscriptions have been cleared, choose again to subscribe",Toast.LENGTH_LONG).show();
@@ -184,15 +186,16 @@ public class SubscriptionNews extends AppCompatActivity {
                 }
 
                 TextView text = (TextView) convertView.findViewById(R.id.text);
-                final AnimateCheckBox checkBox = (AnimateCheckBox) convertView.findViewById(R.id.checkbox);
+                checkBox = (CheckBox) convertView.findViewById(R.id.checkbox);
 
                 final Demo item = subsData.get(position);
                 text.setText(item.getContent());
+
                 if (checkedSet.contains(item)) {
                     checkBox.setChecked(true);
                 } else {
-                    //checkBox.setChecked(false); //has animation
-                    checkBox.setUncheckStatus();
+                    checkBox.setChecked(false); //has animation
+                    //checkBox.setUncheckStatus();
                 }
                 data = subsDB.getSubsList();
                 //  for(int i = 0; i < data.size(); i++){
@@ -208,9 +211,9 @@ public class SubscriptionNews extends AppCompatActivity {
                 // }
                 // subsDB.deleteClients();
 
-                checkBox.setOnCheckedChangeListener(new AnimateCheckBox.OnCheckedChangeListener() {
+                checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
-                    public void onCheckedChanged(View buttonView, boolean isChecked) {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
                             //checkBox.setChecked(isChecked);
                             checkedSet.add(item);
@@ -223,23 +226,6 @@ public class SubscriptionNews extends AppCompatActivity {
                         }
                     }
                 });
-                /*text.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (checkBox.isChecked()) {
-                            checkBox.animate();
-                            checkedSet.add(item);
-                            subsDB.addSubs(item.getContent());
-                        } else {
-                            //checkBox.setChecked(isCheck);
-                            checkBox.animate();
-                            checkedSet.remove(item);
-                            subsDB.deleteSubs(item.getContent());
-                            //Toast.makeText(getApplicationContext(), isCheck + "not checked" , Toast.LENGTH_LONG).show();
-                        }
-
-                    }
-                });*/
 
                 return convertView;
             }
@@ -250,6 +236,6 @@ public class SubscriptionNews extends AppCompatActivity {
     public void onBackPressed() {
         startActivity(new Intent(SubscriptionNews.this, News.class));
         session.setKeyNews(true);
-        finishAffinity();
+        ActivityCompat.finishAffinity(this);
     }
 }
