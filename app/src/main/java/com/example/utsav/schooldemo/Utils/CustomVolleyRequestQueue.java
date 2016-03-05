@@ -26,7 +26,7 @@ public class CustomVolleyRequestQueue {
         mCtx = context;
         mRequestQueue = getRequestQueue();
 
-        mImageLoader = new ImageLoader(mRequestQueue,
+        /*mImageLoader = new ImageLoader(mRequestQueue,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap>
                             cache = new LruCache<String, Bitmap>(40);
@@ -40,7 +40,18 @@ public class CustomVolleyRequestQueue {
                     public void putBitmap(String url, Bitmap bitmap) {
                         cache.put(url, bitmap);
                     }
-                });
+                });*/
+        mImageLoader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache() {
+            @Override
+            public Bitmap getBitmap(String url) {
+                return null;
+            }
+
+            @Override
+            public void putBitmap(String url, Bitmap bitmap) {
+
+            }
+        });
     }
 
     public static synchronized CustomVolleyRequestQueue getInstance(Context context) {

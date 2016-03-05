@@ -5,7 +5,7 @@ android {
     buildToolsVersion '19.1.0'
 
     defaultConfig {
-        applicationId "com.nliverary.app"
+        applicationId "com.nliverary.nbulletin"
         minSdkVersion 9
         targetSdkVersion 23
         versionCode 1
